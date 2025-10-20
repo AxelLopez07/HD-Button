@@ -19,53 +19,65 @@ Imports Newtonsoft.Json.Linq
 
 Public Class DB_Tools
 
-    Public Const updateUrl As String = "https://github.com/AxelLopez07/HD-Button/blob/master/HD%20Tools/version.txt"
+    'Check for HB Button updates method
+    Public Shared Async Function CheckForUpdateAsync() As Task
+        Dim VersionUrl As String = "https://raw.githubusercontent.com/AxelLopez07/HD-Button/d84d44357f829c86207ddf5154ae0348dc16e8d3/HD%20Tools/version.txt"
+        Dim updateUrl As String = "https://raw.githubusercontent.com/AxelLopez07/HD-Button/main/HD%20Tools/HD-Button.zip"
 
-    Public Const downloadUrl As String = "https://github.com/username/MyApp/releases/latest/download/MyAppInstaller.exe"
-
-    'Check for updates method
-    Public Shared Sub CheckForUpdates()
         Try
-            'Dim client As New WebClient()
-            Dim client As New HttpClient
-            'Dim latestVersion As String = client.DownloadString(updateUrl).Trim()
-            Dim latestVersionByte As Byte() = client.GetByteArrayAsync(updateUrl).Result
-            ' Convert bytes to string (UTF-8 is the most common)
-            Dim latestVersion As String = Encoding.UTF8.GetString(latestVersionByte).ToString.Trim()
-            'Dim currentVersion As String = Application.ProductVersion ' Or use My.Application.Info.Version.ToString()
-            Dim currentVersion As String = MainMenu.LabelVer.Text.ToString.Trim() ' Or use My.Application.Info.Version.ToString()
+            Using client As New HttpClient()
+                ' Optional: disable caching (helps if GitHub caches your request)
+                client.DefaultRequestHeaders.Add("Cache-Control", "no-cache")
 
-            MsgBox("" & latestVersion & " - " & currentVersion & "")
+                ' Fetch version text
+                Dim RemoteVersionString As String = Await client.GetStringAsync(VersionUrl)
 
-            If IsNewerVersion(latestVersion, currentVersion) Then
-                Dim result = MessageBox.Show(
-                    $"A new version ({latestVersion}) is available. You have {currentVersion}. Update now?",
-                    "Update Available",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Information)
+                ' Parse both versions
+                Dim localVersion As New Version(MainMenu.LabelVer.Text.ToString)
+                Dim remoteVersion As New Version(remoteVersionString)
 
-                If result = DialogResult.Yes Then
-                    'DownloadAndUpdate()
-                    MsgBox("Updating...")
+                ' Show the raw content
+                'MessageBox.Show("Remote version: [" & remoteVersion.ToString.Trim() & "]", "Version Found")
+                'MessageBox.Show("Local version: [" & localVersion.ToString.Trim() & "]", "Version Found")
+
+                ' Compare
+                If remoteVersion > localVersion Then
+                    If MessageBox.Show($"A new version ({remoteVersion}) is available. Download and install now?",
+                                         "Update Available",
+                                         MessageBoxButtons.YesNo,
+                                         MessageBoxIcon.Information) = DialogResult.Yes Then
+                        Await DownloadAndLaunchUpdaterAsync(updateUrl)
+                    End If
+                Else
+                    MessageBox.Show("You already have the latest version.", "No Update Needed")
                 End If
-            Else
-                MsgBox("You have the latest version.")
-            End If
+
+            End Using
+
         Catch ex As Exception
-            MsgBox(ex.ToString)
-            ' Optional: Log or ignore update errors silently
+            MessageBox.Show("Error while checking version: " & ex.Message, "Error")
         End Try
-    End Sub
-    Public Shared Function IsNewerVersion(latest As String, current As String) As Boolean
-        Return New Version(latest) > New Version(current)
+
     End Function
-    Public Sub DownloadAndUpdate()
-        Dim tempPath As String = IO.Path.Combine(IO.Path.GetTempPath(), "MyAppInstaller.exe")
-        Dim client As New WebClient()
-        client.DownloadFile(downloadUrl, tempPath)
-        Process.Start(tempPath)
-        Application.Exit()
-    End Sub
+
+    Public Shared Async Function DownloadAndLaunchUpdaterAsync(downloadUrl As String) As Task
+        Dim tempFolder As String = Path.GetTempPath()
+        Dim zipPath As String = Path.Combine(tempFolder, "HD-Button.zip")
+        Dim updaterPath As String = Path.Combine(Application.StartupPath, "Updater.exe")
+
+        Using client As New HttpClient()
+            Dim fileBytes = Await client.GetByteArrayAsync(downloadUrl)
+            File.WriteAllBytes(zipPath, fileBytes)
+        End Using
+
+        ' Launch the Updater app to handle replacing the old files
+        If File.Exists(updaterPath) Then
+            Process.Start(updaterPath, $"""{zipPath}"" ""{Application.StartupPath}"" ""{Application.ExecutablePath}""")
+            Application.Exit()
+        Else
+            MessageBox.Show("Updater.exe not found. Please include it in the application folder.")
+        End If
+    End Function
 
     Public Shared Function GetConnectionString() As String
         Return $"Data Source=IRIS-SERVER\XSIRIS;Initial Catalog=iris;Integrated Security=True"

@@ -5,6 +5,7 @@ Imports HD_Button.DB_Tools
 
 
 Public Class MainMenu
+
     Dim listOptions As New List(Of String) From {
         "***REGISTERS***",
         "Close drawers by id",
@@ -82,11 +83,14 @@ Public Class MainMenu
         Debug.Print(optionSelected)
     End Sub
 
-    Public Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Public Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        CheckForUpdates()
+        Await DB_Tools.CheckForUpdateAsync()
 
         Try
+
+
+
             'if argument is found will run task
             If My.Application.CommandLineArgs.Count > 0 Then
                 Select Case My.Application.CommandLineArgs(0)
