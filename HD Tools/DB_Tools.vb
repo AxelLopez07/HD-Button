@@ -19,9 +19,6 @@ Imports Newtonsoft.Json.Linq
 
 Public Class DB_Tools
 
-
-    Public Const updateUrl As String = "https://github.com/AxelLopez07/HD-Button/blob/master/HD%20Tools/version.txt"
-
     Public Const downloadUrl As String = "https://github.com/username/MyApp/releases/latest/download/MyAppInstaller.exe"
 
     'Check for updates method
