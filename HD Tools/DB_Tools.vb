@@ -31,7 +31,7 @@ Public Class DB_Tools
             'Dim latestVersion As String = client.DownloadString(updateUrl).Trim()
             Dim latestVersionByte As Byte() = client.GetByteArrayAsync(updateUrl).Result
             ' Convert bytes to string (UTF-8 is the most common)
-            Dim latestVersion As String = Encoding.UTF8.GetString(latestVersionByte)
+            Dim latestVersion As String = Encoding.UTF8.GetString(latestVersionByte).ToString.Trim()
             'Dim currentVersion As String = Application.ProductVersion ' Or use My.Application.Info.Version.ToString()
             Dim currentVersion As String = MainMenu.LabelVer.Text.ToString.Trim() ' Or use My.Application.Info.Version.ToString()
 
