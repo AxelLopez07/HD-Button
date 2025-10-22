@@ -7,6 +7,11 @@ on:
     paths-ignore:
       - 'backups/**'  # prevent infinite loop when committing backups
 
+# 👇 This line gives permission for the workflow to push commits
+permissions:
+  contents: write
+      
+
 jobs:
   zip_and_commit:
     runs-on: ubuntu-latest
@@ -28,7 +33,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add backups/*.zip
-          git commit -m "Auto backup on push"
+          git add backups/HD-Buton.zip
+          git commit -m "Auto backup on push" || echo "No changes to commit"
           git push
 
