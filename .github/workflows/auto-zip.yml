@@ -22,7 +22,7 @@ jobs:
 
       - name: Create new ZIP backup
         run: |
-          zip -r backups/HD-Button$(date +'%Y-%m-%d_%H-%M-%S').zip . -x "*.git*" "backups/*"
+          zip -r backups/HD-Button.zip . -x "*.git*" "backups/*"
 
       - name: Commit and push ZIP file
         run: |
