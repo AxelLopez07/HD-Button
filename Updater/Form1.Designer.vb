@@ -22,16 +22,31 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Label1 = New Label()
         SuspendLayout()
+        ' 
+        ' Label1
+        ' 
+        Label1.AutoSize = True
+        Label1.Font = New Font("Segoe UI", 21.75F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        Label1.Location = New Point(35, 31)
+        Label1.Name = "Label1"
+        Label1.Size = New Size(154, 40)
+        Label1.TabIndex = 0
+        Label1.Text = "Updating..."
         ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(399, 248)
+        ClientSize = New Size(226, 102)
+        Controls.Add(Label1)
         Name = "Form1"
         Text = "Form1"
         ResumeLayout(False)
+        PerformLayout()
     End Sub
+
+    Friend WithEvents Label1 As Label
 
 End Class
