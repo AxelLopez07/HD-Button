@@ -3,7 +3,7 @@ name: Auto Zip Project
 on:
   push:
     branches:
-      - main          # or your working branch
+      - master          # or your working branch
     paths-ignore:
       - 'backups/**'  # prevent infinite loop when committing backups
 
