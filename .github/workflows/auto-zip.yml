@@ -3,23 +3,32 @@ name: Auto Zip Project
 on:
   push:
     branches:
-      - main   # or your branch name
+      - main          # or your working branch
+    paths-ignore:
+      - 'backups/**'  # prevent infinite loop when committing backups
 
 jobs:
-  zip_project:
+  zip_and_commit:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create ZIP file
+      - name: Clean old backups
         run: |
-          mkdir output
-          zip -r output/HD-Button.zip . -x "*.git*"
+          mkdir -p backups
+          rm -f backups/*.zip
 
-      - name: Upload ZIP as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: HD-Button
-          path: output/HD-Button.zip
+      - name: Create new ZIP backup
+        run: |
+          zip -r backups/HD-Button.zip . -x "*.git*" "backups/*"
+
+      - name: Commit and push ZIP file
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add backups/*.zip
+          git commit -m "Auto backup on push"
+          git push
+
