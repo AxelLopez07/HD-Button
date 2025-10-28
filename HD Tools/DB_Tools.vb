@@ -22,7 +22,8 @@ Public Class DB_Tools
     'Check for HB Button updates method
     Public Shared Async Function CheckForUpdateAsync() As Task
         Dim VersionUrl As String = "https://raw.githubusercontent.com/AxelLopez07/HD-Button/d84d44357f829c86207ddf5154ae0348dc16e8d3/HD%20Tools/version.txt"
-        Dim updateUrl As String = "https://raw.githubusercontent.com/AxelLopez07/HD-Button/main/HD%20Tools/HD-Button.zip"
+        'Dim updateUrl As String = "https://raw.githubusercontent.com/AxelLopez07/HD-Button/main/HD%20Tools/HD-Button.zip"
+        Dim updateUrl As String = "https://raw.githubusercontent.com/AxelLopez07/HD-Button/6ca24c67b4b5a26951ce0f0c92552452dafe2644/HD-Button.zip"
 
         Try
             Using client As New HttpClient()
@@ -78,7 +79,7 @@ Public Class DB_Tools
             MessageBox.Show("Updater.exe not found. Please include it in the application folder.")
         End If
     End Function
-
+    'ConnectionString
     Public Shared Function GetConnectionString() As String
         Return $"Data Source=IRIS-SERVER\XSIRIS;Initial Catalog=iris;Integrated Security=True"
         'Return $"Data Source=localhost\SQLEXPRESS01;Initial Catalog=iris;Integrated Security=True"

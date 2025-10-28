@@ -79,8 +79,4 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="cd $(ProjectDir)&#xD;&#xA;git add .&#xD;&#xA;git commit -m &quot;Auto commit on build&quot;&#xD;&#xA;git push&#xD;&#xA;" />
-  </Target>
-
 </Project>
