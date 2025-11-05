@@ -23,7 +23,7 @@ Public Class DB_Tools
     Public Shared Async Function CheckForUpdateAsync() As Task
         Dim VersionUrl As String = "https://raw.githubusercontent.com/AxelLopez07/HD-Button/d84d44357f829c86207ddf5154ae0348dc16e8d3/HD%20Tools/version.txt"
         'Dim updateUrl As String = "https://raw.githubusercontent.com/AxelLopez07/HD-Button/main/HD%20Tools/HD-Button.zip"
-        Dim updateUrl As String = "https://starcorpemail-my.sharepoint.com/:u:/g/personal/alopez_starcorpus_com/EbRL5mNmRihNlf88bjN6RPwBEqBb2FedvO_QDqe6Gx2Gzg?e=RVflqK"
+        Dim updateUrl As String = ""
 
         Try
             Using client As New HttpClient()
