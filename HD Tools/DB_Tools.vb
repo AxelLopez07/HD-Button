@@ -22,7 +22,7 @@ Public Class DB_Tools
     'Check for HB Button updates method
     Public Shared Async Function CheckForUpdateAsync() As Task
         Dim VersionUrl As String = "https://raw.githubusercontent.com/AxelLopez07/HD-Button/d84d44357f829c86207ddf5154ae0348dc16e8d3/HD%20Tools/version.txt"
-        Dim updateUrl As String = ""
+        Dim updateUrl As String = "1"
 
         Try
             Using client As New HttpClient()
