@@ -30,8 +30,9 @@ jobs:
     - name: Copy Build Output To Release Folder
       run: xcopy "HD Tools\bin\Release\*" "release\" /s /y /i
 
-    - name: Upload App Artifact
-      uses: actions/upload-artifact@v3
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
       with:
-        name: HD-Button-App
-        path: release
+       name: PublishedApp
+       path: ./HD Tools/bin/Release/
+
