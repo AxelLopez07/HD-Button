@@ -1,0 +1,37 @@
+name: Build and Publish HD Button
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.3.1
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.2.0
+
+    - name: Restore NuGet packages
+      run: nuget restore "HD Button.sln"
+
+    - name: Build Project
+      run: msbuild "HD Tools/HD Button.vbproj" /p:Configuration=Release
+
+    - name: Create Release Output Folder
+      run: mkdir release
+
+    - name: Copy Build Output To Release Folder
+      run: xcopy "HD Tools\bin\Release\*" "release\" /s /y /i
+
+    - name: Upload App Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: HD-Button-App
+        path: release
