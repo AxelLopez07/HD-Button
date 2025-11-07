@@ -1,0 +1,47 @@
+name: Build and Publish HD Button (Zipped)
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    - name: Restore NuGet Packages
+      run: nuget restore "HD Tools/HD Button.sln"
+
+    - name: Build Solution in Release mode
+      run: msbuild "HD Tools/HD Button.sln" /p:Configuration=Release
+
+    - name: Create zip of Release output
+      run: |
+        powershell Compress-Archive -Path "HD Tools/HD Button/bin/Release/*" -DestinationPath "HD-Button.zip" -Force
+
+    - name: Create or Update 'Latest' Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: latest
+        name: Latest Build
+        generate_release_notes: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload ZIP to Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: latest
+        files: |
+          HD-Button.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
