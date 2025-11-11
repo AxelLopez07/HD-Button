@@ -110,7 +110,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 '----------------Extract Updated Files (2nd updates)
                 ExtractFromRAR("Directory", "Files\Carls\", "C:\")
 
-                '-----------Run "DatabaseUpdate.sql" file check file for details
+                '-----------Run "DatabaseUpdate.sql" file (check file for details)
                 ExecuteCMD("cmd /c sqlcmd -S localhost\XSIRIS -s, -W -i C:\Temp\DatabaseUpdates.sql")
                 ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\DatabaseUpdates.sql' -Recurse -Force")
 
@@ -146,6 +146,10 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 ExtractFromRAR("Directory", "Files\Common\xpient\FinFileLayoutUpdate\", "C:\xpient")
                 ExecuteCMD("cmd /c C:\xpient\InstallNewFinFile.vbs")
 
+                'Extract and Execute UpdateAppini_GiftCard_Scanning.vbs via cmd to update new Gift cards with the Scanners
+                ExtractFromRAR("File", "Files\Common\temp\UpdateAppini_GiftCard_Scanning.vbs", "C:\xpient")
+                ExecuteCMD("cmd /c C:\xpient\UpdateAppini_GiftCard_Scanning.vbs")
+
                 'Turn OFF windows firewall
                 ExecuteCMD("cmd /c netsh advfirewall set allprofiles state off")
 
@@ -170,7 +174,6 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 '----------------Extract Updated Files (2nd updates)
                 'UnrarResourceFile(My.Resources.Hardees, "C:\")
                 ExtractFromRAR("Directory", "Hardees\", "C:\")
-                ExtractFromRAR("Directory", "Common\xpient\FinFileLayoutUpdate\", "C:\xpient")
 
                 '-----------Run "DatabaseUpdate.sql" file check file for details
                 ExecuteCMD("cmd /c sqlcmd -S localhost\XSIRIS -s, -W -i C:\Temp\DatabaseUpdates.sql")
@@ -203,8 +206,13 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 'Register Services running
                 ExecuteCMD("cmd /c C:\Temp\services_running_registration.bat")
 
-                'Execute NewFinFileXpient.vbs via cmd to update new Fin File store procedures
+                'Extract and execute NewFinFileXpient.vbs via cmd to update new Fin File store procedures
+                ExtractFromRAR("Directory", "Common\xpient\FinFileLayoutUpdate\", "C:\xpient")
                 ExecuteCMD("cmd /c C:\xpient\InstallNewFinFile.vbs")
+
+                'Extract and Execute UpdateAppini_GiftCard_Scanning.vbs via cmd to update new Gift cards with the Scanners
+                ExtractFromRAR("File", "Files\Common\temp\UpdateAppini_GiftCard_Scanning.vbs", "C:\xpient")
+                ExecuteCMD("cmd /c C:\xpient\UpdateAppini_GiftCard_Scanning.vbs")
 
                 'Turn OFF windows firewall
                 ExecuteCMD("cmd /c netsh advfirewall set allprofiles state off")
@@ -295,8 +303,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             'Xenial Sync Service
             If Me.CB_XenialSync.Checked = True Then
                 'extract and Execute Xenial Sync Files
-                ExtractFromRAR("Directory", "Files\Common\xpient\XenialSync\", "C:\xpient")
-                ExecuteCMD("cmd /c C:\xpient\InstallXenialSync.vbs")
+                ExtractFromRAR("File", "Files\Common\xpient\XenialSync\InstallXenialSync.exe", "C:\xpient")
+                ExecuteCMD("cmd /c C:\xpient\InstallXenialSync.exe")
                 MsgBox("XenyalSync service installation completed!")
             End If
 
@@ -304,7 +312,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             If Me.CB_WinSCP.Checked = True Then
                 'Extract and Execute WinSCP
                 ExtractFromRAR("File", "Files\Common\xpient\WinSCP-5.21.8-Setup.exe", "C:\xpient")
-                ExecuteCMD("cmd /c C:\xpient\xpient\WinSCP-5.21.8-Setup.exe")
+                ExecuteCMD("cmd /c C:\xpien\WinSCP-5.21.8-Setup.exe")
                 MsgBox("WinSCP installation completed!")
             End If
 

@@ -49,6 +49,9 @@ Partial Class Installs
         GroupBox2 = New GroupBox()
         Label2 = New Label()
         GroupBox3 = New GroupBox()
+        VScrollBar1 = New VScrollBar()
+        Label4 = New Label()
+        Label5 = New Label()
         GroupBox1.SuspendLayout()
         CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
@@ -58,7 +61,7 @@ Partial Class Installs
         ' 
         ' DMB
         ' 
-        DMB.Location = New Point(23, 83)
+        DMB.Location = New Point(54, 83)
         DMB.Name = "DMB"
         DMB.Size = New Size(150, 45)
         DMB.TabIndex = 0
@@ -67,7 +70,7 @@ Partial Class Installs
         ' 
         ' TextBox1
         ' 
-        TextBox1.Location = New Point(23, 48)
+        TextBox1.Location = New Point(54, 48)
         TextBox1.Name = "TextBox1"
         TextBox1.Size = New Size(150, 29)
         TextBox1.TabIndex = 1
@@ -76,12 +79,12 @@ Partial Class Installs
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
-        Label1.Location = New Point(57, 25)
+        Label1.Font = New Font("Segoe UI", 11.25F)
+        Label1.Location = New Point(6, 25)
         Label1.Name = "Label1"
-        Label1.Size = New Size(78, 20)
+        Label1.Size = New Size(249, 20)
         Label1.TabIndex = 2
-        Label1.Text = "IP Address"
+        Label1.Text = "Main DMB controller box IP Address"
         ' 
         ' StoreNumB
         ' 
@@ -114,8 +117,8 @@ Partial Class Installs
         ' 
         RBUpdatesCarls.AutoSize = True
         RBUpdatesCarls.BackColor = SystemColors.ControlDark
-        RBUpdatesCarls.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
-        RBUpdatesCarls.Location = New Point(6, 39)
+        RBUpdatesCarls.Font = New Font("Segoe UI", 11.25F)
+        RBUpdatesCarls.Location = New Point(5, 28)
         RBUpdatesCarls.Name = "RBUpdatesCarls"
         RBUpdatesCarls.Size = New Size(197, 24)
         RBUpdatesCarls.TabIndex = 10
@@ -127,8 +130,8 @@ Partial Class Installs
         ' 
         RBUpdatesHardees.AutoSize = True
         RBUpdatesHardees.BackColor = SystemColors.ControlDark
-        RBUpdatesHardees.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
-        RBUpdatesHardees.Location = New Point(6, 101)
+        RBUpdatesHardees.Font = New Font("Segoe UI", 11.25F)
+        RBUpdatesHardees.Location = New Point(6, 90)
         RBUpdatesHardees.Name = "RBUpdatesHardees"
         RBUpdatesHardees.Size = New Size(206, 24)
         RBUpdatesHardees.TabIndex = 11
@@ -139,6 +142,8 @@ Partial Class Installs
         ' GroupBox1
         ' 
         GroupBox1.BackColor = SystemColors.ControlDark
+        GroupBox1.Controls.Add(Label5)
+        GroupBox1.Controls.Add(Label4)
         GroupBox1.Controls.Add(CB_Start_MSSQLXSIRIS_Service)
         GroupBox1.Controls.Add(CB_FTTLogTask)
         GroupBox1.Controls.Add(CB_DTIS)
@@ -156,10 +161,10 @@ Partial Class Installs
         GroupBox1.Controls.Add(RBUpdatesCarls)
         GroupBox1.Controls.Add(RBUpdatesHardees)
         GroupBox1.Controls.Add(Button1)
-        GroupBox1.Font = New Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point)
+        GroupBox1.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         GroupBox1.Location = New Point(18, 163)
         GroupBox1.Name = "GroupBox1"
-        GroupBox1.Size = New Size(446, 583)
+        GroupBox1.Size = New Size(486, 583)
         GroupBox1.TabIndex = 12
         GroupBox1.TabStop = False
         GroupBox1.Text = "Updates and Installs"
@@ -167,7 +172,7 @@ Partial Class Installs
         ' CB_Start_MSSQLXSIRIS_Service
         ' 
         CB_Start_MSSQLXSIRIS_Service.AutoSize = True
-        CB_Start_MSSQLXSIRIS_Service.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        CB_Start_MSSQLXSIRIS_Service.Font = New Font("Segoe UI", 11.25F)
         CB_Start_MSSQLXSIRIS_Service.Location = New Point(5, 476)
         CB_Start_MSSQLXSIRIS_Service.Name = "CB_Start_MSSQLXSIRIS_Service"
         CB_Start_MSSQLXSIRIS_Service.Size = New Size(211, 24)
@@ -178,7 +183,7 @@ Partial Class Installs
         ' CB_FTTLogTask
         ' 
         CB_FTTLogTask.AutoSize = True
-        CB_FTTLogTask.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        CB_FTTLogTask.Font = New Font("Segoe UI", 11.25F)
         CB_FTTLogTask.Location = New Point(6, 446)
         CB_FTTLogTask.Name = "CB_FTTLogTask"
         CB_FTTLogTask.Size = New Size(239, 24)
@@ -189,7 +194,7 @@ Partial Class Installs
         ' CB_DTIS
         ' 
         CB_DTIS.AutoSize = True
-        CB_DTIS.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        CB_DTIS.Font = New Font("Segoe UI", 11.25F)
         CB_DTIS.Location = New Point(6, 416)
         CB_DTIS.Name = "CB_DTIS"
         CB_DTIS.Size = New Size(58, 24)
@@ -200,7 +205,7 @@ Partial Class Installs
         ' CB_FastTrack
         ' 
         CB_FastTrack.AutoSize = True
-        CB_FastTrack.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        CB_FastTrack.Font = New Font("Segoe UI", 11.25F)
         CB_FastTrack.Location = New Point(6, 386)
         CB_FastTrack.Name = "CB_FastTrack"
         CB_FastTrack.Size = New Size(91, 24)
@@ -211,7 +216,7 @@ Partial Class Installs
         ' CB_Depletions
         ' 
         CB_Depletions.AutoSize = True
-        CB_Depletions.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        CB_Depletions.Font = New Font("Segoe UI", 11.25F)
         CB_Depletions.Location = New Point(6, 356)
         CB_Depletions.Name = "CB_Depletions"
         CB_Depletions.Size = New Size(100, 24)
@@ -222,7 +227,7 @@ Partial Class Installs
         ' CB_GC
         ' 
         CB_GC.AutoSize = True
-        CB_GC.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        CB_GC.Font = New Font("Segoe UI", 11.25F)
         CB_GC.Location = New Point(6, 326)
         CB_GC.Name = "CB_GC"
         CB_GC.Size = New Size(133, 24)
@@ -242,9 +247,9 @@ Partial Class Installs
         ' PictureBox2
         ' 
         PictureBox2.Image = My.Resources.Resources.Hardees_Logo
-        PictureBox2.Location = New Point(223, 84)
+        PictureBox2.Location = New Point(218, 90)
         PictureBox2.Name = "PictureBox2"
-        PictureBox2.Size = New Size(169, 54)
+        PictureBox2.Size = New Size(169, 38)
         PictureBox2.SizeMode = PictureBoxSizeMode.StretchImage
         PictureBox2.TabIndex = 18
         PictureBox2.TabStop = False
@@ -252,9 +257,9 @@ Partial Class Installs
         ' PictureBox1
         ' 
         PictureBox1.Image = My.Resources.Resources.images
-        PictureBox1.Location = New Point(223, 28)
+        PictureBox1.Location = New Point(218, 17)
         PictureBox1.Name = "PictureBox1"
-        PictureBox1.Size = New Size(169, 50)
+        PictureBox1.Size = New Size(169, 35)
         PictureBox1.SizeMode = PictureBoxSizeMode.StretchImage
         PictureBox1.TabIndex = 17
         PictureBox1.TabStop = False
@@ -262,7 +267,7 @@ Partial Class Installs
         ' CB_WinSCP
         ' 
         CB_WinSCP.AutoSize = True
-        CB_WinSCP.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        CB_WinSCP.Font = New Font("Segoe UI", 11.25F)
         CB_WinSCP.Location = New Point(6, 296)
         CB_WinSCP.Name = "CB_WinSCP"
         CB_WinSCP.Size = New Size(79, 24)
@@ -274,7 +279,7 @@ Partial Class Installs
         ' 
         RadioButton1.AutoSize = True
         RadioButton1.BackColor = SystemColors.ControlDark
-        RadioButton1.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        RadioButton1.Font = New Font("Segoe UI", 11.25F)
         RadioButton1.Location = New Point(6, 155)
         RadioButton1.Name = "RadioButton1"
         RadioButton1.Size = New Size(166, 24)
@@ -286,7 +291,7 @@ Partial Class Installs
         ' CB_XenialSync
         ' 
         CB_XenialSync.AutoSize = True
-        CB_XenialSync.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        CB_XenialSync.Font = New Font("Segoe UI", 11.25F)
         CB_XenialSync.Location = New Point(6, 266)
         CB_XenialSync.Name = "CB_XenialSync"
         CB_XenialSync.Size = New Size(154, 24)
@@ -297,7 +302,7 @@ Partial Class Installs
         ' CB_Loyalty
         ' 
         CB_Loyalty.AutoSize = True
-        CB_Loyalty.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        CB_Loyalty.Font = New Font("Segoe UI", 11.25F)
         CB_Loyalty.Location = New Point(6, 236)
         CB_Loyalty.Name = "CB_Loyalty"
         CB_Loyalty.Size = New Size(192, 24)
@@ -308,7 +313,7 @@ Partial Class Installs
         ' CB_OLO
         ' 
         CB_OLO.AutoSize = True
-        CB_OLO.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        CB_OLO.Font = New Font("Segoe UI", 11.25F)
         CB_OLO.Location = New Point(6, 206)
         CB_OLO.Name = "CB_OLO"
         CB_OLO.Size = New Size(250, 24)
@@ -322,7 +327,7 @@ Partial Class Installs
         GroupBox2.Controls.Add(Label2)
         GroupBox2.Controls.Add(TextBox2)
         GroupBox2.Controls.Add(StoreNumB)
-        GroupBox2.Font = New Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point)
+        GroupBox2.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         GroupBox2.Location = New Point(18, 13)
         GroupBox2.Name = "GroupBox2"
         GroupBox2.Size = New Size(189, 144)
@@ -333,7 +338,7 @@ Partial Class Installs
         ' Label2
         ' 
         Label2.AutoSize = True
-        Label2.Font = New Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point)
+        Label2.Font = New Font("Segoe UI", 11.25F)
         Label2.Location = New Point(53, 25)
         Label2.Name = "Label2"
         Label2.Size = New Size(57, 20)
@@ -346,20 +351,46 @@ Partial Class Installs
         GroupBox3.Controls.Add(TextBox1)
         GroupBox3.Controls.Add(DMB)
         GroupBox3.Controls.Add(Label1)
-        GroupBox3.Font = New Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point)
-        GroupBox3.Location = New Point(275, 13)
+        GroupBox3.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
+        GroupBox3.Location = New Point(241, 13)
         GroupBox3.Name = "GroupBox3"
-        GroupBox3.Size = New Size(189, 144)
+        GroupBox3.Size = New Size(263, 144)
         GroupBox3.TabIndex = 15
         GroupBox3.TabStop = False
         GroupBox3.Text = "DMB SERVICE"
+        ' 
+        ' VScrollBar1
+        ' 
+        VScrollBar1.Location = New Point(0, 0)
+        VScrollBar1.Name = "VScrollBar1"
+        VScrollBar1.Size = New Size(17, 80)
+        VScrollBar1.TabIndex = 16
+        ' 
+        ' Label4
+        ' 
+        Label4.AutoSize = True
+        Label4.Location = New Point(6, 66)
+        Label4.Name = "Label4"
+        Label4.Size = New Size(430, 21)
+        Label4.TabIndex = 26
+        Label4.Text = "----------------------------------------------------------------------"
+        ' 
+        ' Label5
+        ' 
+        Label5.AutoSize = True
+        Label5.Location = New Point(6, 131)
+        Label5.Name = "Label5"
+        Label5.Size = New Size(430, 21)
+        Label5.TabIndex = 27
+        Label5.Text = "----------------------------------------------------------------------"
         ' 
         ' Installs
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         AutoScroll = True
-        ClientSize = New Size(516, 754)
+        ClientSize = New Size(542, 754)
+        Controls.Add(VScrollBar1)
         Controls.Add(GroupBox3)
         Controls.Add(GroupBox2)
         Controls.Add(GroupBox1)
@@ -404,4 +435,7 @@ Partial Class Installs
     Friend WithEvents CB_DTIS As CheckBox
     Friend WithEvents CB_FTTLogTask As CheckBox
     Friend WithEvents CB_Start_MSSQLXSIRIS_Service As CheckBox
+    Friend WithEvents Label5 As Label
+    Friend WithEvents Label4 As Label
+    Friend WithEvents VScrollBar1 As VScrollBar
 End Class
