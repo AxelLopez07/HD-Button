@@ -2,7 +2,7 @@ name: Build and Publish HD Button (Zipped)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
 
 jobs:
   build:
