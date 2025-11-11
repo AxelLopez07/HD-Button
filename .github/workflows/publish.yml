@@ -24,6 +24,15 @@ jobs:
     - name: Build Solution in Release mode
       run: msbuild "HD Button.sln" /p:Configuration=Release
 
+    - name: Show Build Output
+      run: |
+        dir "HD Tools"
+        dir "HD Tools/HD Button"
+        dir "HD Tools/HD Button/bin"
+        dir "HD Tools/HD Button/bin/Release"
+        dir "HD Tools/HD Button/bin/x64/Release"
+
+
     - name: Create zip of Release output
       run: |
         powershell -Command "Compress-Archive -Path 'HD Tools/HD Button/bin/Release/*' -DestinationPath 'HD-Button.zip' -Force"
