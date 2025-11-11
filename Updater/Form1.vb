@@ -34,14 +34,18 @@ Public Class Form1
 
             ' Copy new files over the existing ones
             For Each file In Directory.GetFiles(extractPath, "*", SearchOption.AllDirectories)
-                Dim relativePath = file.Substring(extractPath.Length + 1)
+                'For Each file In Directory.GetFiles("C:\Users\IRIS_ADMIN\AppData\Local\Temp\HD-Button\net9.0-windows7.0", "*", SearchOption.AllDirectories)
+                'Dim relativePath = file.Substring(extractPath.Length + 1)
+                Dim relativePath = file.Substring(extractPath.Length + 19)
                 Dim destPath = Path.Combine(installPath, relativePath)
 
+                'MsgBox("File to copy: " & file.ToString)
+                'MsgBox("Relativepath=" & relativePath.ToString)
                 'MsgBox("FileName:" & file.ToString)
                 'MsgBox("destPath:" & destPath.ToString)
 
 
-                Directory.CreateDirectory(Path.GetDirectoryName(destPath))
+                'Directory.CreateDirectory(Path.GetDirectoryName(destPath))
                 'file.Copy(file, destPath, True)
                 System.IO.File.Copy(file, destPath, True)
 
