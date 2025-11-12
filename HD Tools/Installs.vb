@@ -94,7 +94,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
         End If
     End Sub
     'INSTALLS Button
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+    Private Async Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Try
             Me.Button1.Enabled = False
 
@@ -378,6 +378,28 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 MsgBox("Start MSSQL$XSIRIS Service Windows task has been registered Successfully!")
 
                 ExecuteCMD("cmd /c powershell -Command() & ""Remove-Item " & " 'C:\temp\Start_MSSQL$XSIRIS_Service.xml' -Recurse -Force" & "")
+
+            End If
+
+            'R365 Starcorp/Carl's Jr Version Install
+            If Me.CB_R365_SC.Checked = True Then
+                'extract R365
+                ExtractFromRAR("Directory", "Files\Common\temp\R365\", "C:\temp\R365")
+                'Execute R365 bat installer file
+                ExecuteCMD("cmd /c C:\Temp\R365\R365_Install_SC.bat")
+
+                MsgBox("R365 Carl's Jr Version Installed Successfully!")
+
+            End If
+
+            'R365 Hardees version Install
+            If Me.CB_R365_SS.Checked = True Then
+                'extract R365
+                ExtractFromRAR("Directory", "Files\Common\temp\R365\", "C:\temp\R365")
+                'Execute R365 bat installer file
+                ExecuteCMD("cmd /c C:\Temp\R365\R365_Install_SS.bat")
+
+                MsgBox("R365 Hardees Version Installed Successfully!")
 
             End If
 

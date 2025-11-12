@@ -32,6 +32,9 @@ Partial Class Installs
         RBUpdatesCarls = New RadioButton()
         RBUpdatesHardees = New RadioButton()
         GroupBox1 = New GroupBox()
+        CB_R365_SC = New CheckBox()
+        Label5 = New Label()
+        Label4 = New Label()
         CB_Start_MSSQLXSIRIS_Service = New CheckBox()
         CB_FTTLogTask = New CheckBox()
         CB_DTIS = New CheckBox()
@@ -50,8 +53,7 @@ Partial Class Installs
         Label2 = New Label()
         GroupBox3 = New GroupBox()
         VScrollBar1 = New VScrollBar()
-        Label4 = New Label()
-        Label5 = New Label()
+        CB_R365_SS = New CheckBox()
         GroupBox1.SuspendLayout()
         CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
@@ -106,7 +108,7 @@ Partial Class Installs
         ' 
         ' Button1
         ' 
-        Button1.Location = New Point(129, 517)
+        Button1.Location = New Point(129, 578)
         Button1.Name = "Button1"
         Button1.Size = New Size(127, 50)
         Button1.TabIndex = 6
@@ -142,6 +144,8 @@ Partial Class Installs
         ' GroupBox1
         ' 
         GroupBox1.BackColor = SystemColors.ControlDark
+        GroupBox1.Controls.Add(CB_R365_SS)
+        GroupBox1.Controls.Add(CB_R365_SC)
         GroupBox1.Controls.Add(Label5)
         GroupBox1.Controls.Add(Label4)
         GroupBox1.Controls.Add(CB_Start_MSSQLXSIRIS_Service)
@@ -164,10 +168,39 @@ Partial Class Installs
         GroupBox1.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         GroupBox1.Location = New Point(18, 163)
         GroupBox1.Name = "GroupBox1"
-        GroupBox1.Size = New Size(486, 583)
+        GroupBox1.Size = New Size(486, 650)
         GroupBox1.TabIndex = 12
         GroupBox1.TabStop = False
         GroupBox1.Text = "Updates and Installs"
+        ' 
+        ' CB_R365_SC
+        ' 
+        CB_R365_SC.AutoSize = True
+        CB_R365_SC.Font = New Font("Segoe UI", 11.25F)
+        CB_R365_SC.Location = New Point(6, 506)
+        CB_R365_SC.Name = "CB_R365_SC"
+        CB_R365_SC.Size = New Size(165, 24)
+        CB_R365_SC.TabIndex = 28
+        CB_R365_SC.Text = "R365 Carl's Jr version"
+        CB_R365_SC.UseVisualStyleBackColor = True
+        ' 
+        ' Label5
+        ' 
+        Label5.AutoSize = True
+        Label5.Location = New Point(6, 131)
+        Label5.Name = "Label5"
+        Label5.Size = New Size(430, 21)
+        Label5.TabIndex = 27
+        Label5.Text = "----------------------------------------------------------------------"
+        ' 
+        ' Label4
+        ' 
+        Label4.AutoSize = True
+        Label4.Location = New Point(6, 66)
+        Label4.Name = "Label4"
+        Label4.Size = New Size(430, 21)
+        Label4.TabIndex = 26
+        Label4.Text = "----------------------------------------------------------------------"
         ' 
         ' CB_Start_MSSQLXSIRIS_Service
         ' 
@@ -366,30 +399,23 @@ Partial Class Installs
         VScrollBar1.Size = New Size(17, 80)
         VScrollBar1.TabIndex = 16
         ' 
-        ' Label4
+        ' CB_R365_SS
         ' 
-        Label4.AutoSize = True
-        Label4.Location = New Point(6, 66)
-        Label4.Name = "Label4"
-        Label4.Size = New Size(430, 21)
-        Label4.TabIndex = 26
-        Label4.Text = "----------------------------------------------------------------------"
-        ' 
-        ' Label5
-        ' 
-        Label5.AutoSize = True
-        Label5.Location = New Point(6, 131)
-        Label5.Name = "Label5"
-        Label5.Size = New Size(430, 21)
-        Label5.TabIndex = 27
-        Label5.Text = "----------------------------------------------------------------------"
+        CB_R365_SS.AutoSize = True
+        CB_R365_SS.Font = New Font("Segoe UI", 11.25F)
+        CB_R365_SS.Location = New Point(7, 536)
+        CB_R365_SS.Name = "CB_R365_SS"
+        CB_R365_SS.Size = New Size(171, 24)
+        CB_R365_SS.TabIndex = 29
+        CB_R365_SS.Text = "R365 Hardees version"
+        CB_R365_SS.UseVisualStyleBackColor = True
         ' 
         ' Installs
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         AutoScroll = True
-        ClientSize = New Size(542, 754)
+        ClientSize = New Size(542, 825)
         Controls.Add(VScrollBar1)
         Controls.Add(GroupBox3)
         Controls.Add(GroupBox2)
@@ -438,4 +464,6 @@ Partial Class Installs
     Friend WithEvents Label5 As Label
     Friend WithEvents Label4 As Label
     Friend WithEvents VScrollBar1 As VScrollBar
+    Friend WithEvents CB_R365_SC As CheckBox
+    Friend WithEvents CB_R365_SS As CheckBox
 End Class
