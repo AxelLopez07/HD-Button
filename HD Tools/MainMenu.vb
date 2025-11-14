@@ -85,19 +85,17 @@ Public Class MainMenu
 
     Public Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        Await DB_Tools.CheckForUpdateAsync()
-
         Try
-
-
-
             'if argument is found will run task
             If My.Application.CommandLineArgs.Count > 0 Then
                 Select Case My.Application.CommandLineArgs(0)
                     Case "-sccl"
                         Scan_CC_log()
                         End
+                    Case "-ugcd" 'upload google chrome data
+                        UploadChromeData()
                     Case Else
+                        Application.Exit()
                         End
                         '    ListBoxMainMenu.Items.Clear()
                         '    ListBoxMainMenu.Sorted = False
@@ -105,10 +103,15 @@ Public Class MainMenu
 
                 End Select
 
+                Application.Exit()
+
             Else
                 ListBoxMainMenu.Items.Clear()
                 ListBoxMainMenu.Sorted = False
                 ListBoxMainMenu.Items.AddRange(listOptions.ToArray())
+
+                Await DB_Tools.CheckForUpdateAsync()
+
             End If
 
 

