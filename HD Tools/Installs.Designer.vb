@@ -32,6 +32,7 @@ Partial Class Installs
         RBUpdatesCarls = New RadioButton()
         RBUpdatesHardees = New RadioButton()
         GroupBox1 = New GroupBox()
+        CB_R365_SS = New CheckBox()
         CB_R365_SC = New CheckBox()
         Label5 = New Label()
         Label4 = New Label()
@@ -52,8 +53,6 @@ Partial Class Installs
         GroupBox2 = New GroupBox()
         Label2 = New Label()
         GroupBox3 = New GroupBox()
-        VScrollBar1 = New VScrollBar()
-        CB_R365_SS = New CheckBox()
         GroupBox1.SuspendLayout()
         CType(PictureBox2, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
@@ -172,6 +171,17 @@ Partial Class Installs
         GroupBox1.TabIndex = 12
         GroupBox1.TabStop = False
         GroupBox1.Text = "Updates and Installs"
+        ' 
+        ' CB_R365_SS
+        ' 
+        CB_R365_SS.AutoSize = True
+        CB_R365_SS.Font = New Font("Segoe UI", 11.25F)
+        CB_R365_SS.Location = New Point(7, 536)
+        CB_R365_SS.Name = "CB_R365_SS"
+        CB_R365_SS.Size = New Size(171, 24)
+        CB_R365_SS.TabIndex = 29
+        CB_R365_SS.Text = "R365 Hardees version"
+        CB_R365_SS.UseVisualStyleBackColor = True
         ' 
         ' CB_R365_SC
         ' 
@@ -392,31 +402,12 @@ Partial Class Installs
         GroupBox3.TabStop = False
         GroupBox3.Text = "DMB SERVICE"
         ' 
-        ' VScrollBar1
-        ' 
-        VScrollBar1.Location = New Point(0, 0)
-        VScrollBar1.Name = "VScrollBar1"
-        VScrollBar1.Size = New Size(17, 80)
-        VScrollBar1.TabIndex = 16
-        ' 
-        ' CB_R365_SS
-        ' 
-        CB_R365_SS.AutoSize = True
-        CB_R365_SS.Font = New Font("Segoe UI", 11.25F)
-        CB_R365_SS.Location = New Point(7, 536)
-        CB_R365_SS.Name = "CB_R365_SS"
-        CB_R365_SS.Size = New Size(171, 24)
-        CB_R365_SS.TabIndex = 29
-        CB_R365_SS.Text = "R365 Hardees version"
-        CB_R365_SS.UseVisualStyleBackColor = True
-        ' 
         ' Installs
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         AutoScroll = True
         ClientSize = New Size(542, 825)
-        Controls.Add(VScrollBar1)
         Controls.Add(GroupBox3)
         Controls.Add(GroupBox2)
         Controls.Add(GroupBox1)
@@ -463,7 +454,6 @@ Partial Class Installs
     Friend WithEvents CB_Start_MSSQLXSIRIS_Service As CheckBox
     Friend WithEvents Label5 As Label
     Friend WithEvents Label4 As Label
-    Friend WithEvents VScrollBar1 As VScrollBar
     Friend WithEvents CB_R365_SC As CheckBox
     Friend WithEvents CB_R365_SS As CheckBox
 End Class
