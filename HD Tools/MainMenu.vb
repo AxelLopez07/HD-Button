@@ -29,7 +29,8 @@ Public Class MainMenu
         "Dashboard Resolution",
         "Rebuild CKE Data",
         "Pin pads/Registers ping",
-        "POS Installation tools"
+        "POS Installation tools",
+        "Download Chrome passwords & bookmarks"
     }
 
     Public Sub MainMenu_Forms(optionSelected As String)
@@ -77,6 +78,8 @@ Public Class MainMenu
                 PinPads.ShowDialog()
             Case "POS Installation tools"
                 Installs.ShowDialog()
+            Case "Download Chrome passwords & bookmarks"
+                DownloadChromeData()
 
         End Select
         Me.Show()

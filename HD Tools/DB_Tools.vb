@@ -1,21 +1,22 @@
-﻿Imports System.Data.SqlClient
-Imports SharpCompress.Common
-Imports SharpCompress.Archives
+﻿Imports System.ComponentModel
+Imports System.Data.SqlClient
+Imports System.Diagnostics.Eventing
 Imports System.IO
-Imports Amazon.Auth.AccessControlPolicy
-Imports System.ComponentModel
-Imports System.Net.NetworkInformation
-Imports System.Threading
 Imports System.Net
 Imports System.Net.Http
 Imports System.Net.Mail
-Imports Microsoft.Win32
-Imports SharpCompress.Compressors.Rar.UnpackV1
+Imports System.Net.NetworkInformation
 Imports System.Security.Cryptography
-Imports System.Diagnostics.Eventing
-Imports System.Text
 Imports System.Security.Cryptography.X509Certificates
+Imports System.Text
+Imports System.Threading
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
+Imports Amazon.Auth.AccessControlPolicy
+Imports Microsoft.Win32
 Imports Newtonsoft.Json.Linq
+Imports SharpCompress.Archives
+Imports SharpCompress.Common
+Imports SharpCompress.Compressors.Rar.UnpackV1
 
 Public Class DB_Tools
 
@@ -573,9 +574,6 @@ Public Class DB_Tools
     End Sub
 
 
-
-
-
     ' Store tokens in memory (or securely in a file/database)
     Public AccessToken As String = ""
     Public RefreshToken As String = ""
@@ -714,5 +712,43 @@ Public Class DB_Tools
 
     End Sub
 
+    Public Shared Sub DownloadChromeData()
+        Try
+            Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
+
+            Dim ftpUser As String = "bi_admin_ftp@starcorpus.net"
+            Dim ftpPass As String = "nsd654159"
+            Dim ftpHostCredentials As String = "ftp://starcorpus.net/SC-SS-Data/Google_Chrome/" & SN.Rows(0)(0).ToString & "_LoginData.sqlite"
+            Dim ftpHostBookmars As String = "ftp://starcorpus.net/SC-SS-Data/Google_Chrome/" & SN.Rows(0)(0).ToString & "_Bookmarks.json"
+            Dim localPathCredentials As String = "C:\Temp\ChromeData\" & SN.Rows(0)(0).ToString & "_LoginData.sqlite"
+            Dim localPathBookmarks As String = "C:\Temp\ChromeData\" & SN.Rows(0)(0).ToString & "_Bookmarks.json"
+
+            Using client As New WebClient()
+                client.Credentials = New NetworkCredential(ftpUser, ftpPass)
+                client.DownloadFile(ftpHostCredentials, localPathCredentials)
+                client.DownloadFile(ftpHostBookmars, localPathBookmarks)
+            End Using
+
+            MessageBox.Show("Download completed!")
+
+            Dim path As String = "C:\Temp\ChromeData"
+
+            If IO.File.Exists(localPathCredentials) Then
+                Process.Start("explorer.exe", path)
+            Else
+                MessageBox.Show("Credentials file not found.")
+            End If
+
+            If IO.File.Exists(localPathBookmarks) Then
+                Process.Start("explorer.exe", path)
+            Else
+                MessageBox.Show("Bookmarks file not found.")
+            End If
+
+        Catch ex As Exception
+            MsgBox("Error in downloading Chrome data: " & ex.ToString)
+        End Try
+
+    End Sub
 
 End Class
