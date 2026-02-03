@@ -70,15 +70,15 @@ Public Class PinPads
         LPP2_IP.ResetText()
         LPP4_IP.ResetText()
         LPP5_IP.ResetText()
-        LPSCAD1.ResetText()
-        LPSCAD2.ResetText()
-        LPSCAD4.ResetText()
-        LPSCAD5.ResetText()
-        LReg1Ping.ResetText()
-        LReg2Ping.ResetText()
-        LReg3Ping.ResetText()
-        LReg4Ping.ResetText()
-        LReg5Ping.ResetText()
+        'LPSCAD1.ResetText()
+        'LPSCAD2.ResetText()
+        'LPSCAD4.ResetText()
+        'LPSCAD5.ResetText()
+        'LReg1Ping.ResetText()
+        'LReg2Ping.ResetText()
+        'LReg3Ping.ResetText()
+        'LReg4Ping.ResetText()
+        'LReg5Ping.ResetText()
         successCount1 = 0
         failCount1 = 0
         successCount2 = 0
@@ -113,7 +113,7 @@ Public Class PinPads
         Try
             If Me.LPP1_IP.Text.Length = 18 Then
                 Dim hostNameOrAddress1 As String = Me.LPP1_IP.Text.ToString.Substring(5, 13).ToString
-                Dim LabelStatus1 As Label = Me.LPSCAD1
+                'Dim LabelStatus1 As Label = Me.LPSCAD1
                 Dim reply1 As PingReply = pingSender.Send(hostNameOrAddress1, 1000, New Byte() {1, 2, 3, 4}, options)
 
                 If reply1.Status = IPStatus.Success Then
@@ -124,7 +124,15 @@ Public Class PinPads
 
                 Dim totalPings1 As Integer = successCount1 + failCount1
                 Dim lossPercentage1 As Double = If(totalPings1 > 0, Format((failCount1 / totalPings1) * 100, "#.00"), 0)
-                LabelStatus1.Text = $"loss rate:" & lossPercentage1.ToString & "%   received packets:" & successCount1.ToString & ""
+                'LabelStatus1.Text = $"loss rate:" & lossPercentage1.ToString & "%   received packets:" & successCount1.ToString & ""
+
+                If lossPercentage1 <> 0 Then
+                    StatusStrip1.Items(0).ForeColor = Color.Red
+                Else
+                    StatusStrip1.Items(0).ForeColor = Color.Green
+                End If
+
+                StatusStrip1.Items(0).Text = $"loss rate:" & lossPercentage1.ToString & "%   received packets:" & successCount1.ToString & ""
 
             End If
         Catch ex As Exception
@@ -137,7 +145,7 @@ Public Class PinPads
             If Me.LPP2_IP.Text.Length = 18 Then
 
                 Dim hostNameOrAddress2 As String = Me.LPP2_IP.Text.ToString.Substring(5, 13).ToString
-                Dim LabelStatus2 As Label = Me.LPSCAD2
+                'Dim LabelStatus2 As Label = Me.LPSCAD2
                 Dim reply2 As PingReply = pingSender.Send(hostNameOrAddress2, 1000, New Byte() {1, 2, 3, 4}, options)
 
                 If reply2.Status = IPStatus.Success Then
@@ -148,7 +156,14 @@ Public Class PinPads
 
                 Dim totalPings2 As Integer = successCount2 + failCount2
                 Dim lossPercentage2 As Double = If(totalPings2 > 0, Format((failCount2 / totalPings2) * 100, "#.00"), 0)
-                LabelStatus2.Text = $"loss rate:" & lossPercentage2.ToString & "%   received packets:" & successCount2.ToString & ""
+                'LabelStatus2.Text = $"loss rate:" & lossPercentage2.ToString & "%   received packets:" & successCount2.ToString & ""
+                If lossPercentage2 <> 0 Then
+                    StatusStrip2.Items(0).ForeColor = Color.Red
+                Else
+                    StatusStrip2.Items(0).ForeColor = Color.Green
+                End If
+
+                StatusStrip2.Items(0).Text = $"loss rate:" & lossPercentage2.ToString & "%   received packets:" & successCount2.ToString & ""
             End If
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -160,7 +175,7 @@ Public Class PinPads
             If Me.LPP4_IP.Text.Length = 18 Then
 
                 Dim hostNameOrAddress3 As String = Me.LPP4_IP.Text.ToString.Substring(5, 13).ToString
-                Dim LabelStatus3 As Label = Me.LPSCAD4
+                'Dim LabelStatus3 As Label = Me.LPSCAD4
                 Dim reply3 As PingReply = pingSender.Send(hostNameOrAddress3, 1000, New Byte() {1, 2, 3, 4}, options)
 
                 If reply3.Status = IPStatus.Success Then
@@ -171,7 +186,14 @@ Public Class PinPads
 
                 Dim totalPings3 As Integer = successCount3 + failCount3
                 Dim lossPercentage3 As Double = If(totalPings3 > 0, Format((failCount3 / totalPings3) * 100, "#.00"), 0)
-                LabelStatus3.Text = $"loss rate:" & lossPercentage3.ToString & "%   received packets:" & successCount3.ToString & ""
+                'LabelStatus3.Text = $"loss rate:" & lossPercentage3.ToString & "%   received packets:" & successCount3.ToString & ""
+                If lossPercentage3 <> 0 Then
+                    StatusStrip3.Items(0).ForeColor = Color.Red
+                Else
+                    StatusStrip3.Items(0).ForeColor = Color.Green
+                End If
+
+                StatusStrip3.Items(0).Text = $"loss rate:" & lossPercentage3.ToString & "%   received packets:" & successCount3.ToString & ""
             End If
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -182,7 +204,7 @@ Public Class PinPads
         Try
             If Me.LPP5_IP.Text.Length = 18 Then
                 Dim hostNameOrAddress4 As String = Me.LPP5_IP.Text.ToString.Substring(5, 13).ToString
-                Dim LabelStatus4 As Label = Me.LPSCAD5
+                'Dim LabelStatus4 As Label = Me.LPSCAD5
                 Dim reply4 As PingReply = pingSender.Send(hostNameOrAddress4, 1000, New Byte() {1, 2, 3, 4}, options)
 
                 If reply4.Status = IPStatus.Success Then
@@ -193,7 +215,14 @@ Public Class PinPads
 
                 Dim totalPings4 As Integer = successCount4 + failCount4
                 Dim lossPercentage4 As Double = If(totalPings4 > 0, Format((failCount4 / totalPings4) * 100, "#.00"), 0)
-                LabelStatus4.Text = $"loss rate:" & lossPercentage4.ToString & "%   received packets:" & successCount4.ToString & ""
+                'LabelStatus4.Text = $"loss rate:" & lossPercentage4.ToString & "%   received packets:" & successCount4.ToString & ""
+                If lossPercentage4 <> 0 Then
+                    StatusStrip4.Items(0).ForeColor = Color.Red
+                Else
+                    StatusStrip4.Items(0).ForeColor = Color.Green
+                End If
+
+                StatusStrip4.Items(0).Text = $"loss rate:" & lossPercentage4.ToString & "%   received packets:" & successCount4.ToString & ""
             End If
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -203,7 +232,7 @@ Public Class PinPads
     Private Sub Timer5_Tick(sender As Object, e As EventArgs) Handles Timer5.Tick
         Try
             Dim hostNameOrAddress5 As String = "192.168.1.101"
-            Dim LabelStatus5 As Label = Me.LReg1Ping
+            'Dim LabelStatus5 As Label = Me.LReg1Ping
             Dim reply5 As PingReply = pingSender.Send(hostNameOrAddress5, 1000, New Byte() {1, 2, 3, 4}, options)
 
             If reply5.Status = IPStatus.Success Then
@@ -214,7 +243,15 @@ Public Class PinPads
 
             Dim totalPings5 As Integer = successCount5 + failCount5
             Dim lossPercentage5 As Double = If(totalPings5 > 0, Format((failCount5 / totalPings5) * 100, "#.00"), 0)
-            LabelStatus5.Text = $"loss rate:" & lossPercentage5.ToString & "%   received packets:" & successCount5.ToString & ""
+            'LabelStatus5.Text = $"loss rate:" & lossPercentage5.ToString & "%   received packets:" & successCount5.ToString & ""
+
+            If lossPercentage5 <> 0 Then
+                StatusStrip5.Items(0).ForeColor = Color.Red
+            Else
+                StatusStrip5.Items(0).ForeColor = Color.Green
+            End If
+
+            StatusStrip5.Items(0).Text = $"loss rate:" & lossPercentage5.ToString & "%   received packets:" & successCount5.ToString & ""
 
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -224,7 +261,7 @@ Public Class PinPads
     Private Sub Timer6_Tick(sender As Object, e As EventArgs) Handles Timer6.Tick
         Try
             Dim hostNameOrAddress6 As String = "192.168.1.102"
-            Dim LabelStatus6 As Label = Me.LReg2Ping
+            'Dim LabelStatus6 As Label = Me.LReg2Ping
             Dim reply6 As PingReply = pingSender.Send(hostNameOrAddress6, 1000, New Byte() {1, 2, 3, 4}, options)
 
             If reply6.Status = IPStatus.Success Then
@@ -235,7 +272,15 @@ Public Class PinPads
 
             Dim totalPings6 As Integer = successCount6 + failCount6
             Dim lossPercentage6 As Double = If(totalPings6 > 0, Format((failCount6 / totalPings6) * 100, "#.00"), 0)
-            LabelStatus6.Text = $"loss rate:" & lossPercentage6.ToString & "%   received packets:" & successCount6.ToString & ""
+            'LabelStatus6.Text = $"loss rate:" & lossPercentage6.ToString & "%   received packets:" & successCount6.ToString & ""
+
+            If lossPercentage6 <> 0 Then
+                StatusStrip6.Items(0).ForeColor = Color.Red
+            Else
+                StatusStrip6.Items(0).ForeColor = Color.Green
+            End If
+
+            StatusStrip6.Items(0).Text = $"loss rate:" & lossPercentage6.ToString & "%   received packets:" & successCount6.ToString & ""
 
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -245,7 +290,7 @@ Public Class PinPads
     Private Sub Timer7_Tick(sender As Object, e As EventArgs) Handles Timer7.Tick
         Try
             Dim hostNameOrAddress7 As String = "192.168.1.103"
-            Dim LabelStatus7 As Label = Me.LReg3Ping
+            'Dim LabelStatus7 As Label = Me.LReg3Ping
             Dim reply7 As PingReply = pingSender.Send(hostNameOrAddress7, 1000, New Byte() {1, 2, 3, 4}, options)
 
             If reply7.Status = IPStatus.Success Then
@@ -256,7 +301,15 @@ Public Class PinPads
 
             Dim totalPings7 As Integer = successCount7 + failCount7
             Dim lossPercentage7 As Double = If(totalPings7 > 0, Format((failCount7 / totalPings7) * 100, "#.00"), 0)
-            LabelStatus7.Text = $"loss rate:" & lossPercentage7.ToString & "%   received packets:" & successCount7.ToString & ""
+            'LabelStatus7.Text = $"loss rate:" & lossPercentage7.ToString & "%   received packets:" & successCount7.ToString & ""
+
+            If lossPercentage7 <> 0 Then
+                StatusStrip7.Items(0).ForeColor = Color.Red
+            Else
+                StatusStrip7.Items(0).ForeColor = Color.Green
+            End If
+
+            StatusStrip7.Items(0).Text = $"loss rate:" & lossPercentage7.ToString & "%   received packets:" & successCount7.ToString & ""
 
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -266,7 +319,7 @@ Public Class PinPads
     Private Sub Timer8_Tick(sender As Object, e As EventArgs) Handles Timer8.Tick
         Try
             Dim hostNameOrAddress8 As String = "192.168.1.104"
-            Dim LabelStatus8 As Label = Me.LReg4Ping
+            'Dim LabelStatus8 As Label = Me.LReg4Ping
             Dim reply8 As PingReply = pingSender.Send(hostNameOrAddress8, 1000, New Byte() {1, 2, 3, 4}, options)
 
             If reply8.Status = IPStatus.Success Then
@@ -277,7 +330,15 @@ Public Class PinPads
 
             Dim totalPings8 As Integer = successCount8 + failCount8
             Dim lossPercentage8 As Double = If(totalPings8 > 0, Format((failCount8 / totalPings8) * 100, "#.00"), 0)
-            LabelStatus8.Text = $"loss rate:" & lossPercentage8.ToString & "%   received packets:" & successCount8.ToString & ""
+            'LabelStatus8.Text = $"loss rate:" & lossPercentage8.ToString & "%   received packets:" & successCount8.ToString & ""
+
+            If lossPercentage8 <> 0 Then
+                StatusStrip8.Items(0).ForeColor = Color.Red
+            Else
+                StatusStrip8.Items(0).ForeColor = Color.Green
+            End If
+
+            StatusStrip8.Items(0).Text = $"loss rate:" & lossPercentage8.ToString & "%   received packets:" & successCount8.ToString & ""
 
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -287,7 +348,7 @@ Public Class PinPads
     Private Sub Timer9_Tick(sender As Object, e As EventArgs) Handles Timer9.Tick
         Try
             Dim hostNameOrAddress9 As String = "192.168.1.105"
-            Dim LabelStatus9 As Label = Me.LReg5Ping
+            'Dim LabelStatus9 As Label = Me.LReg5Ping
             Dim reply9 As PingReply = pingSender.Send(hostNameOrAddress9, 1000, New Byte() {1, 2, 3, 4}, options)
 
             If reply9.Status = IPStatus.Success Then
@@ -298,7 +359,15 @@ Public Class PinPads
 
             Dim totalPings9 As Integer = successCount9 + failCount9
             Dim lossPercentage9 As Double = If(totalPings9 > 0, Format((failCount9 / totalPings9) * 100, "#.00"), 0)
-            LabelStatus9.Text = $"loss rate:" & lossPercentage9.ToString & "%   received packets:" & successCount9.ToString & ""
+            'LabelStatus9.Text = $"loss rate:" & lossPercentage9.ToString & "%   received packets:" & successCount9.ToString & ""
+
+            If lossPercentage9 <> 0 Then
+                StatusStrip9.Items(0).ForeColor = Color.Red
+            Else
+                StatusStrip9.Items(0).ForeColor = Color.Green
+            End If
+
+            StatusStrip9.Items(0).Text = $"loss rate:" & lossPercentage9.ToString & "%   received packets:" & successCount9.ToString & ""
 
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -417,15 +486,15 @@ Public Class PinPads
         Me.LPP2_IP.ResetText()
         Me.LPP4_IP.ResetText()
         Me.LPP5_IP.ResetText()
-        Me.LPSCAD1.ResetText()
-        Me.LPSCAD2.ResetText()
-        Me.LPSCAD4.ResetText()
-        Me.LPSCAD5.ResetText()
-        Me.LReg1Ping.ResetText()
-        Me.LReg2Ping.ResetText()
-        Me.LReg3Ping.ResetText()
-        Me.LReg4Ping.ResetText()
-        Me.LReg5Ping.ResetText()
+        'Me.LPSCAD1.ResetText()
+        'Me.LPSCAD2.ResetText()
+        'Me.LPSCAD4.ResetText()
+        'Me.LPSCAD5.ResetText()
+        'Me.LReg1Ping.ResetText()
+        'Me.LReg2Ping.ResetText()
+        'Me.LReg3Ping.ResetText()
+        'Me.LReg4Ping.ResetText()
+        'Me.LReg5Ping.ResetText()
         successCount1 = 0
         failCount1 = 0
         successCount2 = 0

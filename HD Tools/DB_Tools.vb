@@ -339,7 +339,7 @@ Public Class DB_Tools
             Dim options As New PingOptions()
             Dim reply As PingReply
             Dim SCADID As String = Nothing
-            Dim LabelStatus As Control = Nothing
+            'Dim LabelStatus As Control = Nothing
 
             'Dim successCount As Integer = 0
             Dim successCount As New List(Of Integer)
@@ -371,16 +371,16 @@ Public Class DB_Tools
                 Select Case I
                     Case 0
                         SCADID = PinPads.LPP1_IP.Text.ToString
-                        LabelStatus = PinPads.LPSCAD1
+                        'LabelStatus = PinPads.LPSCAD1
                     Case 1
                         SCADID = PinPads.LPP2_IP.Text.ToString
-                        LabelStatus = PinPads.LPSCAD2
+                        'LabelStatus = PinPads.LPSCAD2
                     Case 2
                         SCADID = PinPads.LPP4_IP.Text.ToString
-                        LabelStatus = PinPads.LPSCAD4
+                        'LabelStatus = PinPads.LPSCAD4
                     Case 3
                         SCADID = PinPads.LPP5_IP.Text.ToString
-                        LabelStatus = PinPads.LPSCAD5
+                        'LabelStatus = PinPads.LPSCAD5
                 End Select
 
                 'ping trace
@@ -399,7 +399,7 @@ Public Class DB_Tools
 
                     totalPings(I) = successCount(I) + failCount(I)
                     lossPercentage(I) = (failCount(I) / totalPings(I)) * 100
-                    LabelStatus.Text = $"loss rate:" & lossPercentage(I).ToString & "% received packets:" & successCount(I).ToString & ""
+                    'LabelStatus.Text = $"loss rate:" & lossPercentage(I).ToString & "% received packets:" & successCount(I).ToString & ""
 
                 End If
 

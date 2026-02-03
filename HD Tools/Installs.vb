@@ -426,20 +426,20 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             'R365 Starcorp/Carl's Jr Version Install
             If Me.CB_R365_SC.Checked = True Then
                 'extract R365
-                ExtractFromRAR("Directory", "Files\Common\temp\R365\", "C:\temp\R365")
+                ExtractFromRAR("Directory", "Files\Common\temp\R365\Carls\", "C:\temp\R365\Carls")
                 'Execute R365 bat installer file
-                ExecuteCMD("cmd /c C:\Temp\R365\R365_Install_SC.bat")
+                ExecuteCMD("cmd /c C:\Temp\R365\Carls\R365_Install_SC.bat")
 
                 MsgBox("R365 Carl's Jr Version Installed Successfully!")
 
             End If
 
-            'R365 Hardees version Install
+            'R365 superiorstar/Hardees version Install
             If Me.CB_R365_SS.Checked = True Then
                 'extract R365
-                ExtractFromRAR("Directory", "Files\Common\temp\R365\", "C:\temp\R365")
+                ExtractFromRAR("Directory", "Files\Common\temp\R365\Hardees\", "C:\temp\R365\Hardees")
                 'Execute R365 bat installer file
-                ExecuteCMD("cmd /c C:\Temp\R365\R365_Install_SS.bat")
+                ExecuteCMD("cmd /c C:\Temp\R365\Hardees\R365_Install_SS.bat")
 
                 MsgBox("R365 Hardees Version Installed Successfully!")
 
