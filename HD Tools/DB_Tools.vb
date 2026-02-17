@@ -1,6 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports System.Data.SqlClient
-Imports System.Diagnostics.Eventing
+Imports System.Diagnostics
 Imports System.IO
 Imports System.Net
 Imports System.Net.Http
@@ -147,6 +147,28 @@ Public Class DB_Tools
         Dim p As Process = Process.GetProcessById(processID)
         p.WaitForExit()
     End Sub
+    Public Shared Sub RegisterWindowsTask(command As String)
+
+        Dim psi As New ProcessStartInfo()
+        psi.FileName = "schtasks.exe"
+        psi.Arguments = command
+        psi.UseShellExecute = False
+        psi.CreateNoWindow = True
+        psi.RedirectStandardOutput = True
+        psi.RedirectStandardError = True
+
+        Dim p As Process = Process.Start(psi)
+
+        Dim output As String = p.StandardOutput.ReadToEnd()
+        Dim errors As String = p.StandardError.ReadToEnd()
+
+        p.WaitForExit()
+
+        MessageBox.Show("Output: " & output & Environment.NewLine &
+                    "Errors: " & errors)
+
+    End Sub
+
     'fill SCADevice info
     Public Shared Sub FillSCADInfo()
         Try
@@ -783,6 +805,76 @@ Public Class DB_Tools
         Catch ex As Exception
             MsgBox("Error in downloading Chrome data: " & ex.ToString)
         End Try
+
+    End Sub
+
+    Public Shared Sub DownloadFromFTP(File As String, LocalPath As String)
+        Try
+            'Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
+
+            Dim ftpHost As String = "ftp://starcorpus.net/"
+            Dim ftpUser As String = "bi_admin_ftp@starcorpus.net"
+            Dim ftpPass As String = "nsd654159"
+            Dim FTP_FilePath As String = ftpHost & File
+
+            'create patch if not exist C:\Temp\ChromeData
+            'If Not Directory.Exists("C:\Temp\InstallApps") Then
+            'Directory.CreateDirectory("C:\Temp\InstallApps")
+            'End If
+
+            'download parameters
+            Dim request As FtpWebRequest = CType(WebRequest.Create(FTP_FilePath), FtpWebRequest)
+            request.Method = WebRequestMethods.Ftp.DownloadFile
+            request.Credentials = New NetworkCredential(ftpUser, ftpPass)
+            request.UseBinary = True
+            request.UsePassive = True   ' VERY important
+            request.KeepAlive = False
+            'request.EnableSsl = True
+            request.Timeout = 600000
+            request.ReadWriteTimeout = 600000
+
+
+            'download file
+            Using response As FtpWebResponse = CType(request.GetResponse(), FtpWebResponse)
+                Using responseStream As Stream = response.GetResponseStream()
+                    Using fs As New FileStream(LocalPath, FileMode.Create)
+                        responseStream.CopyTo(fs)
+                    End Using
+                End Using
+            End Using
+
+        Catch ex As Exception
+            MsgBox("Error in downloading File: " & File & ex.ToString)
+        End Try
+
+    End Sub
+
+    Public Shared Sub ExecuteCMDAndLog(command As String, logFilePath As String)
+
+        Dim psi As New ProcessStartInfo()
+        psi.FileName = "cmd.exe"
+        psi.Arguments = "/c " & command
+        psi.RedirectStandardOutput = True
+        psi.RedirectStandardError = True
+        psi.UseShellExecute = False
+        psi.CreateNoWindow = True
+
+        Using process As Process = Process.Start(psi)
+
+            Dim output As String = process.StandardOutput.ReadToEnd()
+            Dim errors As String = process.StandardError.ReadToEnd()
+
+            process.WaitForExit()
+
+            ' Combine output and errors
+            Dim finalOutput As String = "===== OUTPUT =====" & Environment.NewLine &
+                                        output & Environment.NewLine &
+                                        "===== ERRORS =====" & Environment.NewLine &
+                                        errors
+
+            File.WriteAllText(logFilePath, finalOutput, Encoding.UTF8)
+
+        End Using
 
     End Sub
 

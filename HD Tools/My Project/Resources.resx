@@ -130,4 +130,10 @@
   <data name="OLOCredentials" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\OLOCredentials.csv;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="R365SC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\R365SC.csv;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="R365SS" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\R365SS.csv;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

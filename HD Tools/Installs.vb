@@ -1,14 +1,16 @@
-﻿Imports System.IO
+﻿Imports System.Diagnostics
+Imports System.IO
+Imports System.IO.Compression
+Imports System.Net
+Imports System.Runtime.CompilerServices
+Imports System.Security.Cryptography
+Imports System.Threading
 Imports HD_Button.DB_Tools
 Imports Microsoft.SqlServer
 Imports Microsoft.VisualBasic.FileIO
 Imports MongoDB.Driver.Search
-Imports System.Threading
 Imports SharpCompress.Archives
 Imports SharpCompress.Readers
-Imports System.Runtime.CompilerServices
-Imports System.Net
-Imports System.Diagnostics
 
 Public Class Installs
     'XDMB service
@@ -235,13 +237,12 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 If Directory.Exists("C:\Program Files (x86)\Olo") Then
                     MsgBox("OLO folder found!, need to uninstall OLO and delete OLO folder and files (C:\Program Files (x86)\Olo) before install OLO again")
                 Else
+
                     Dim OLOUserName As String = "user"
                     Dim OLOPassword As String = "password"
 
                     Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
                     Dim Found As Integer = 0
-
-
 
                     ' Convert the byte resource to a string
                     Dim csvBytes As Byte() = My.Resources.OLOCredentials
@@ -278,12 +279,38 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                     If Found = 0 Then
                         MsgBox("Store Number '" & searchWord.ToString & "'  Not Found!")
                     Else
-                        'extract OLO installer 
-                        ExtractFromRAR("File", "Files\Common\xpient\OLOw7.exe", "C:\xpient")
+
+                        'create patch if not exist C:\Xpient
+                        If Not Directory.Exists("C:\Xpient") Then
+                            Directory.CreateDirectory("C:\Xpient")
+                        End If
+
+                        'Download OLO installer
+                        DownloadFromFTP("Stores_Apps/OLO/OLOw7.exe", "C:\Xpient\OLOw7.exe")
 
                         'Install OLO command
-                        ExecuteCMD("cmd /c C:\xpient\OLOw7.exe –IIS –POI –olocode " & OLOUserName.ToString & " –olopw " & OLOPassword.ToString & "")
-                        MsgBox("OLO Installation Complete!")
+                        'ExecuteCMD("cmd /c C:\xpient\OLOw7.exe –IIS –POI –olocode " & OLOUserName.ToString & " –olopw " & OLOPassword.ToString & "")
+
+                        'execute OLO installer with arguments and wait for installation to be done
+                        Dim psi As New ProcessStartInfo()
+                        psi.FileName = "C:\Xpient\OLOw7.exe –IIS –POI –olocode " & OLOUserName.ToString & " –olopw " & OLOPassword.ToString & ""
+                        psi.UseShellExecute = True
+                        psi.Verb = "runas"
+
+                        Try
+                            Dim proc As Process = Process.Start(psi)
+
+                            If proc IsNot Nothing Then
+                                proc.WaitForExit()   ' ⬅ This pauses your code until installer closes
+
+                                MsgBox("OLO Installation Complete!")
+
+                            End If
+
+                        Catch ex As Exception
+                            MessageBox.Show("User cancelled UAC prompt.")
+                        End Try
+
                     End If
 
                 End If
@@ -368,33 +395,75 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             If Me.CB_Depletions.Checked = True Then
                 ExtractFromRAR("Directory", "Files\Common\temp\Depletions\", "C:\IRIS\Bin\HD Button\Depletions")
                 MsgBox("Depletions installation completed!")
+
             End If
 
             'Fast Track
             If Me.CB_FastTrack.Checked = True Then
-                'UnrarResourceFile(My.Resources.Fast_Track_PC_Software_Setup_2_27, "C:\temp") and execute/install
-                ExtractFromRAR("File", "Files\Common\temp\Fast_Track_PC_Software_Setup_2.27.exe", "C:\temp")
-                ExecuteCMD("cmd /c C:\temp\Fast_Track_PC_Software_Setup_2.27.exe")
+                'Download Fastrack file.exe from FTP site and execute it (had to use cmd coreFTP command due appears download methond not working for large files)
+                ExecuteCMD("""c:\Program Files\CoreFTP\coreftp.exe"" -s -o -d ftp://bi_admin_ftp@starcorpus.net:nsd654159@starcorpus.net/Stores_Apps/FastTrackFiles/Fast_Track_PC_Software_Setup_2.27.exe -p C:\temp\")
 
-                'Extract Fast track Files
-                ExtractFromRAR("Directory", "Files\Common\temp\FastTrackFiles\", "C:\programdata\Fast Track Software Suite")
+                'execute Fastrack installer and wait for installation to be done
+                Dim psi As New ProcessStartInfo()
+                psi.FileName = "C:\temp\Fast_Track_PC_Software_Setup_2.27.exe"
+                psi.UseShellExecute = True
+                psi.Verb = "runas"
 
-                MsgBox("Fast Track Installation Completed!, Note: the site and parameters set up needs to be done manually!")
+                Try
+                    Dim proc As Process = Process.Start(psi)
+
+                    If proc IsNot Nothing Then
+                        proc.WaitForExit()   ' ⬅ This pauses your code until installer closes
+
+                        'Download extra Fast track Files after installation
+                        DownloadFromFTP("Stores_Apps/FastTrackFiles/CKERTD.bat", "C:\programdata\Fast Track Software Suite\CKERTD.bat")
+                        DownloadFromFTP("Stores_Apps/FastTrackFiles/fttparam060420carls.spd", "C:\programdata\Fast Track Software Suite\fttparam060420carls.spd")
+                        DownloadFromFTP("Stores_Apps/FastTrackFiles/fttparam070720hardees.spd", "C:\programdata\Fast Track Software Suite\fttparam070720hardees.spd")
+
+                        MsgBox("Fast Track Installation Completed!, Note: the site and parameters set up needs to be done manually!")
+
+                    End If
+
+                Catch ex As Exception
+                    MessageBox.Show("User cancelled UAC prompt.")
+                End Try
+
             End If
 
             'DTIS
             If Me.CB_DTIS.Checked = True Then
-                ' UnrarResourceFile(My.Resources.DTIS_Setup_V2_4, "C:\temp")
-                ExtractFromRAR("File", "Files\Common\temp\DTIS_Setup_V2.4.exe", "C:\temp")
+                'Download DTIS files from FTP site
+                DownloadFromFTP("Stores_Apps/FastTrackFiles/DTIS_Setup_V2.4.exe", "C:\temp\DTIS_Setup_V2.4.exe")
 
-                ExecuteCMD("cmd /c C:\temp\DTIS_Setup_V2.4.exe")
-                MsgBox("DTIS installation completed!, Note the DTIS IP address and layout set up needs to be done manually")
+                'execute Fastrack installer and wait for installation to be done
+                Dim psi As New ProcessStartInfo()
+                psi.FileName = "C:\temp\DTIS_Setup_V2.4.exe"
+                psi.UseShellExecute = True
+                psi.Verb = "runas"
+
+                Try
+                    Dim proc As Process = Process.Start(psi)
+
+                    If proc IsNot Nothing Then
+                        proc.WaitForExit()   ' ⬅ This pauses your code until installer closes
+
+                        'download DTIS template file
+                        DownloadFromFTP("Stores_Apps/FastTrackFiles/templates/DTIS2.xml", "C:\programdata\Fast Track Software Suite\templates\DTIS2.xml")
+
+                        MsgBox("DTIS installation completed!, Note: the DTIS IP address and layout set up needs to be done manually")
+
+                    End If
+
+                Catch ex As Exception
+                    MessageBox.Show("User cancelled UAC prompt.")
+                End Try
+
             End If
 
             'FTTLog Windows Task
             If Me.CB_FTTLogTask.Checked = True Then
-                'extract xml taSK FILE
-                ExtractFromRAR("File", "Files\Common\temp\FastTrackFiles\FTTLog.xml", "C:\temp")
+                'download xml taSK FILE
+                DownloadFromFTP("Stores_Apps/FastTrackFiles/FTTLog.xml", "C:\temp\FTTLog.xml")
 
                 'Delete task from Schedule if exists already
                 ExecuteCMD("cmd /c schtasks /delete /tn " & "FTTLog" & " /f")
@@ -425,23 +494,161 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
 
             'R365 Starcorp/Carl's Jr Version Install
             If Me.CB_R365_SC.Checked = True Then
-                'extract R365
-                ExtractFromRAR("Directory", "Files\Common\temp\R365\Carls\", "C:\temp\R365\Carls")
-                'Execute R365 bat installer file
-                ExecuteCMD("cmd /c C:\Temp\R365\Carls\R365_Install_SC.bat")
+                'Download R365 SC exe
+                DownloadFromFTP("/Stores_Apps/R365/SC/ComidaGP.PRO.26.6.0.102.zip", "C:\temp\ComidaGP.PRO.26.6.0.102.zip")
 
-                MsgBox("R365 Carl's Jr Version Installed Successfully!")
+                ''Install R365 SS version acording store number in the R365SS csv resource file
+                Dim R365SCKey As String = "password"
+
+                Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
+                Dim Found As Integer = 0
+
+                ' Convert the byte resource to a string
+                Dim csvBytes As Byte() = My.Resources.R365SC
+                Dim csvContent As String = System.Text.Encoding.UTF8.GetString(csvBytes)
+
+                ' Split the CSV content into rows
+                Dim rows As String() = csvContent.Split(New String() {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
+
+                ' Define the word to search for
+                Dim searchWord As String = SN.Rows(0)(0).ToString
+
+                ' Initialize variables to store the results
+                'Dim secondColumnValue As String = String.Empty
+                'Dim thirdColumnValue As String = String.Empty
+
+                ' Loop through each row to find the search word
+                For Each row As String In rows
+                    ' Split the row into columns (assuming a comma delimiter)
+                    Dim columns As String() = row.Split(","c)
+
+                    ' Check if the Third column contains the search word if there is 3 columns or more
+                    If columns.Length >= 3 AndAlso columns(2).Trim() = searchWord Then
+                        Found = 1
+                        ' Retrieve the second column values
+                        R365SCKey = columns(1).Trim()
+
+                        ' Exit the loop since we only need the matching row
+                        Exit For
+
+                    End If
+                Next
+
+                If Found = 0 Then '0=not found, 1= found
+                    MsgBox("Store Number '" & searchWord.ToString & "'  Not Found!")
+                Else
+                    'create patch if not exist C:\R365
+                    If Not Directory.Exists("C:\R365") Then
+                        Directory.CreateDirectory("C:\R365")
+                    End If
+
+                    'Extract R365 SC rar file into C:\R365 folder
+                    ZipFile.ExtractToDirectory("C:\temp\ComidaGP.PRO.26.6.0.102.zip", "C:\R365")
+
+                    'Set 'SetupConfig.br' file with the correct store number and key
+                    Dim fileName As String = "R365"
+                    Dim extension As String = ".bat"   ' any extension you want
+                    Dim folderPath As String = "C:\R365"
+
+                    Dim fullPath As String = Path.Combine(folderPath, fileName & extension)
+                    Dim fileContent As String = "C:\R365\ComidaGP.exe -r -s ""starcorpvalley,Xpient," & R365SCKey & "," & SN.Rows(0)(0).ToString & ",,,,3/31/2022 7:00:00 AM,True,IRIS-SERVER\XSIRIS,IRIS,False,False,False,False,False,,,,False,,False,False,False,False,False,False,False,False,False,False,False"
+
+                    File.WriteAllText(fullPath, fileContent)
+
+                    'Delete task from Schedule if exists already
+                    ExecuteCMD("cmd /c schtasks /delete /tn " & "R365 Import" & " /f")
+                    'register R365 windows task               
+                    ExecuteCMD("cmd /c schtasks /create /tn ""R365 Import"" /st 00:05 /du 0023:50 /k /tr ""C:\R365\R365.bat"" /sc daily /ri 15 /ru iris_admin /rp STCOXp13nt@dmin /RL HIGHEST")
+
+                    MsgBox("R365 Hardees Version Installed Successfully!")
+                End If
 
             End If
 
             'R365 superiorstar/Hardees version Install
             If Me.CB_R365_SS.Checked = True Then
-                'extract R365
-                ExtractFromRAR("Directory", "Files\Common\temp\R365\Hardees\", "C:\temp\R365\Hardees")
-                'Execute R365 bat installer file
-                ExecuteCMD("cmd /c C:\Temp\R365\Hardees\R365_Install_SS.bat")
+                'Download R365 SS exe
+                DownloadFromFTP("/Stores_Apps/R365/SS/ComidaInstaller24.50.0.exe", "C:\temp\ComidaInstaller24.50.0.exe")
+                'DownloadFromFTP("/Stores_Apps/R365/SS/R365Import.xml", "C:\temp\R365Import.xml")
 
-                MsgBox("R365 Hardees Version Installed Successfully!")
+                ''Install R365 SS version acording store number in the R365SS csv resource file
+                Dim R365SSKey As String = "password"
+
+                Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
+                Dim Found As Integer = 0
+
+                ' Convert the byte resource to a string
+                Dim csvBytes As Byte() = My.Resources.R365SS
+                Dim csvContent As String = System.Text.Encoding.UTF8.GetString(csvBytes)
+
+                ' Split the CSV content into rows
+                Dim rows As String() = csvContent.Split(New String() {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
+
+                ' Define the word to search for
+                Dim searchWord As String = SN.Rows(0)(0).ToString
+
+                ' Initialize variables to store the results
+                'Dim secondColumnValue As String = String.Empty
+                'Dim thirdColumnValue As String = String.Empty
+
+                ' Loop through each row to find the search word
+                For Each row As String In rows
+                    ' Split the row into columns (assuming a comma delimiter)
+                    Dim columns As String() = row.Split(","c)
+
+                    ' Check if the Third column contains the search word if there is 3 columns or more
+                    If columns.Length >= 3 AndAlso columns(2).Trim() = searchWord Then
+                        Found = 1
+                        ' Retrieve the second column values
+                        R365SSKey = columns(1).Trim()
+
+                        ' Exit the loop since we only need the matching row
+                        Exit For
+
+                    End If
+                Next
+
+                If Found = 0 Then '0=not found, 1= found
+                    MsgBox("Store Number '" & searchWord.ToString & "'  Not Found!")
+                Else
+                    'create patch if not exist C:\R365
+                    If Not Directory.Exists("C:\R365") Then
+                        Directory.CreateDirectory("C:\R365")
+                    End If
+
+                    'Execute R365 installer
+                    Dim psi As New ProcessStartInfo()
+                    psi.FileName = "C:\temp\ComidaInstaller24.50.0.exe"
+                    psi.UseShellExecute = True
+                    psi.Verb = "runas"
+
+                    Try
+                        Dim proc As Process = Process.Start(psi)
+
+                        If proc IsNot Nothing Then
+                            proc.WaitForExit()   ' ⬅ This pauses your code until installer closes
+                        End If
+
+                    Catch ex As Exception
+                        MessageBox.Show("User cancelled UAC prompt.")
+                    End Try
+
+                    'Set 'SetupConfig.br' file with the correct store number and key
+                    Dim fileName As String = "SetupConfig"
+                    Dim extension As String = ".br"   ' any extension you want
+                    Dim folderPath As String = "C:\R365"
+
+                    Dim fullPath As String = Path.Combine(folderPath, fileName & extension)
+                    Dim fileContent As String = "superiorstar,Xpient," & R365SSKey & "," & SN.Rows(0)(0).ToString & ",,,,8/18/2023 12:00:00 AM,True,.\XSIRIS,IRIS,False,False,False,False,False,,,,False,,False,False,False,False,False,False,False,False,False,False,False#$%#{""IsSplitTaxExemptCategories"":""True""}"
+                    File.WriteAllText(fullPath, fileContent)
+
+                    'Delete task from Schedule if exists already
+                    ExecuteCMD("cmd /c schtasks /delete /tn " & "R365 Import" & " /f")
+                    'register R365 windows task               
+                    ExecuteCMD("cmd /c Schtasks /create /tn ""R365 Import"" /tr ""C:\R365\ComidaGP.exe run"" /sc daily /st 05:05 /ri 15 /du 24:00 /ru iris_admin /rp STCOXp13nt@dmin /RL HIGHEST")
+
+                    MsgBox("R365 Hardees Version Installed Successfully!")
+                End If
 
             End If
 
