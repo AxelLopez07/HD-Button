@@ -147,6 +147,7 @@ Public Class DB_Tools
         Dim p As Process = Process.GetProcessById(processID)
         p.WaitForExit()
     End Sub
+    'test method
     Public Shared Sub RegisterWindowsTask(command As String)
 
         Dim psi As New ProcessStartInfo()

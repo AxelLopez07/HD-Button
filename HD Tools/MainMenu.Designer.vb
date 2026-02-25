@@ -40,7 +40,7 @@ Partial Class MainMenu
         LabelVer.Name = "LabelVer"
         LabelVer.Size = New Size(40, 15)
         LabelVer.TabIndex = 41
-        LabelVer.Text = "1.0.1.5"
+        LabelVer.Text = "1.0.1.6"
         LabelVer.TextAlign = ContentAlignment.MiddleRight
         ' 
         ' LabelPhoneNumber

@@ -11,6 +11,7 @@ Imports Microsoft.VisualBasic.FileIO
 Imports MongoDB.Driver.Search
 Imports SharpCompress.Archives
 Imports SharpCompress.Readers
+Imports System.ServiceProcess
 
 Public Class Installs
     'XDMB service
@@ -61,7 +62,7 @@ Public Class Installs
         End Try
 
     End Sub
-    'change Store Number
+    'Change Store Number
     Private Sub StoreNumB_Click(sender As Object, e As EventArgs) Handles StoreNumB.Click
         Dim SN As Integer = TextBox2.Text
         DialogResult = MessageBox.Show($"Are you sure you want to change this location's store number to {SN}?", "Change Store Number", MessageBoxButtons.YesNo)
@@ -103,7 +104,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
         Try
             Me.Button1.Enabled = False
 
-            'CARL'S jr's
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'CARL'S jr's--------------------------------------------------------------------------------------------------------------------
             If Me.RBUpdatesCarls.Checked = True Then
 
                 '----------------Extract STCO.exe File
@@ -167,12 +169,14 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
 
             End If
 
-            'HARDEES
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'HARDEES------------------------------------------------------------------------------------------------------------------------
             If Me.RBUpdatesHardees.Checked = True Then
 
                 '----------------Extract STCO.exe File
                 'UnrarResourceFile(My.Resources.STCO_exe, "C:\")
                 ExtractFromRAR("File", "Common\temp\STCO.exe", "C:\temp")
+
                 '-----------------Stage STCO file updates (1st Updates)
                 ExecuteCMD("cmd /c C:\Temp\STCO.exe")
 
@@ -231,7 +235,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
 
             End If
 
-            'OLO
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'OLO----------------------------------------------------------------------------------------------------------------------------
             If Me.CB_OLO.Checked = True Then
 
                 If Directory.Exists("C:\Program Files (x86)\Olo") Then
@@ -317,21 +322,237 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 End If
             End If
 
-            'Loyalty (XLC)
+            '--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            'Xpient Loyalty Controller (XLC)-------------------------------------------------------------------------------------------------------------------------------------------------------------
             If Me.CB_Loyalty.Checked = True Then
 
                 If Directory.Exists("C:\Program Files (x86)\xpient Solutions\XPIENT Loyalty Controller") Then
                     MsgBox("Loyalty folder found!, need to uninstall XLC and delete XLC folder and files (C:\Program Files (x86)\xpient Solutions\XPIENT Loyalty Controller) before install XLC again")
                 Else
-                    'extract XLC installation files and execute
-                    ExtractFromRAR("Directory", "Files\Common\temp\XLC\", "C:\temp\XLC")
-                    ExecuteCMD("cmd /c C:\Temp\XLCInstall.bat")
+
+                    'Create required LoyaltyCustomValues.ini files for BOC and registers path
+                    Dim fileName As String = "LoyaltyCustomValues"
+                    Dim extension As String = ".ini"   ' any extension you want
+                    Dim folderPath As String = "c:\iris\data"
+                    Dim folderPath2 As String = "c:\iris\reginfo\common\data"
+
+                    Dim fullPath As String = Path.Combine(folderPath, fileName & extension)
+                    Dim fullPath2 As String = Path.Combine(folderPath2, fileName & extension)
+                    Dim fileContent As String = "[Loyalty]
+LoyaltyCustomValue4=7573
+LoyaltyCustomValue7=1
+LoyaltyCustomValue8=60
+LoyaltyCustomValue9=11/3/2021 10:14:46 AM
+LoyaltyCustomValue5=
+LoyaltyCustomValue6="
+
+                    File.WriteAllText(fullPath, fileContent)
+                    File.WriteAllText(fullPath2, fileContent)
+
+                    'If the [Loyalty] section doesn't exist in the App.ini file, add it to the end of the file
+                    'File Paths where the [Loyalty] values will be written
+                    Dim fileAppIniPath As New List(Of String)()
+                    fileAppIniPath.Add("C:\iris\ini\appini.ini")
+                    fileAppIniPath.Add("C:\iris\reginfo\reg1\ini\appini.ini")
+                    fileAppIniPath.Add("C:\iris\reginfo\reg2\ini\appini.ini")
+                    fileAppIniPath.Add("C:\iris\reginfo\reg3\ini\appini.ini")
+                    fileAppIniPath.Add("C:\iris\reginfo\reg4\ini\appini.ini")
+                    fileAppIniPath.Add("C:\iris\reginfo\reg5\ini\appini.ini")
+
+                    Dim wordToFind As String = "[Loyalty]"
+
+                    ' Lines to add if word [Loyalty] does not exist
+                    Dim linesToAdd As String() = {
+        "[Loyalty]",
+        "Log=127",
+        "AddinServerName=Punchh",
+        "Adapter_0=Punchh",
+        "SubmitTimeOut=10",
+        "GenerateTimeOut=10",
+        "IDExpireSeconds=60",
+        "UseFiletransfer=0",
+        "WebServerURL=192.168.1.100:8044",
+        "requestdir=c:\loyaltyrequests",
+        "responsedir=c:\loyaltyresponses",
+        "Blankbitmap=loywhite.bmp",
+        "AutoBitmp=loyauto.bmp",
+        "applyBitmap=loyapply.bmp",
+        "Skipbitmap=loyskip.bmp",
+        "enablePhoneNumActivate=1",
+        "EnableMobileCode=1",
+        "EnableEmailLookup=1",
+        "AutoDetectNumber=1",
+        "CardLengthMin=-1",
+        "cardLengthMax=-1",
+        "PhoneLength=10",
+        "MobileCodeLength=7",
+        "QRPrefix=|",
+        "QRcodeEnclosure=PUNCHH",
+        "ScanCodePrefix=C",
+        "EnableLoyaltyBarCode=1",
+        "SenditemTypeExDetail=1",
+        "IgnoreIDExpire=1",
+        "ApplyRewardsOnAccept=1",
+        "DisableNumericLoyaltyCodeScanOnOrderScreen=0"
+    }
+
+                    'Cycle to verify values exists or if need to be written in Reg1 to Reg5
+                    For I As Integer = 0 To 5
+                        ' Make sure file exists
+                        If Not File.Exists(fileAppIniPath(I).ToString) Then
+                            'MessageBox.Show("app.ini file not found.")
+                        Else
+                            ' Read entire appini.ini file
+                            Dim fileContentIni As String = File.ReadAllText(fileAppIniPath(I).ToString)
+                            ' Check if word exists (case insensitive)
+                            If Not fileContentIni.IndexOf(wordToFind, StringComparison.OrdinalIgnoreCase) >= 0 Then
+
+                                ' Append lines at the end
+                                File.AppendAllLines(fileAppIniPath(I).ToString, linesToAdd)
+
+                                'MessageBox.Show("Lines added successfully.")
+                            Else
+                                'MessageBox.Show("Word already exists. No changes made.")
+                            End If
+                        End If
+                    Next
+
+                    'diferent [Loyalty] values for the xsposserver.ini file on the BOC only
+                    Dim linesToAdd2 As String() = {
+        "[Loyalty]",
+        "SubmitAllOrdersOrderPoints=Olo"}
+
+                    ' Make sure file exists
+                    If Not File.Exists("C:\iris\ini\xsposserver.ini") Then
+                        MessageBox.Show("C:\iris\ini\xsposserver.ini file not found.")
+                    Else
+                        ' Read entire C:\iris\ini\xsposserver.ini file
+                        Dim fileContentIni As String = File.ReadAllText("C:\iris\ini\xsposserver.ini")
+                        ' Check if word not exists (case insensitive)
+                        If Not fileContentIni.IndexOf(wordToFind, StringComparison.OrdinalIgnoreCase) >= 0 Then
+
+                            ' Append lines at the end
+                            File.AppendAllLines("C:\iris\ini\xsposserver.ini", linesToAdd2)
+
+                            'MessageBox.Show("Lines added successfully.")
+                        Else
+                            'MessageBox.Show("Word already exists. No changes made.")
+                        End If
+                    End If
+
+                    'Download XLC installer from FTP site
+                    DownloadFromFTP("Stores_Apps/XLC/XLC_2.5.0.319.exe", "C:\temp\XLC_2.5.0.319.exe")
+
+                    'Execute XLC installer with arguments and wait for installation to be done
+                    Dim psi As New ProcessStartInfo()
+                    psi.FileName = "C:\temp\XLC_2.5.0.319.exe"
+                    psi.Arguments = "/COMPONENTS=Punchh /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /RESTARTEXITCODE=30103"   'Arguments go here
+                    psi.Verb = "runas"
+                    psi.UseShellExecute = True
+
+                    Try
+                        Dim p As Process = Process.Start(psi)
+
+                        If p IsNot Nothing Then
+                            p.WaitForExit()
+                        End If
+
+                    Catch ex As Exception
+                        MessageBox.Show(ex.Message)
+                    End Try
+
+                    'Get Store Number from database
+                    Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
+                    Dim Found As Integer = 0
+
+                    'Location Key variable
+                    Dim LocationKey As String = ""
+
+                    'Search Store Location Key from resrouce file and store in its variable
+                    ' Convert the byte resource to a string
+                    Dim csvBytes As Byte() = My.Resources.XLCLocationKey
+                    Dim csvContent As String = System.Text.Encoding.UTF8.GetString(csvBytes)
+
+                    ' Split the XLC CSV content into rows
+                    Dim rows As String() = csvContent.Split(New String() {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
+
+                    ' Define the word to search for, in this case the XLC variable stored before
+                    Dim searchWord As String = SN.Rows(0)(0).ToString
+
+                    ' Loop through each row to find the search word in the first column
+                    For Each row As String In rows
+                        ' Split the row into columns (assuming a comma delimiter)
+                        Dim columns As String() = row.Split(","c)
+
+                        ' Check if the first column contains the search word
+                        If columns.Length >= 2 AndAlso columns(0).Trim() = searchWord Then
+                            Found = 1
+                            ' Retrieve the second column value (Location Key)
+                            LocationKey = columns(1).Trim()
+
+                            ' Exit the loop since we only need the matching row
+                            Exit For
+
+                        End If
+                    Next
+
+                    'IF store Locatio Key is Not found, cancel, otherwise, write store location key in the XLC config file
+                    If Found = 0 Then
+                        MsgBox("Location Key number for Store '" & searchWord.ToString & "' Not Found in the XLCLocationKey.csv file!")
+                    Else
+
+                        'Download ddisc.LIC (Lincese) file for the XLC installation to the iris linceses folder path
+                        DownloadFromFTP("Stores_Apps/XLC/ddisc.lic", "c:\iris\Licenses\ddisc.lic")
+
+                        'Download XLC.LICX (Lincese) file for the XLC installation to the XLC lincense folder path
+                        DownloadFromFTP("Stores_Apps/XLC/XLC.licx", "c:\Program Files (x86)\xpient Solutions\XPIENT Loyalty Controller\Licenses\XLC.licx")
+
+                        'download Punchh.dll.config file to the XL installation folder path
+                        DownloadFromFTP("Stores_Apps/XLC/Punchh.dll.config", "C:\Program Files (x86)\xpient Solutions\XPIENT Loyalty Controller\PipeLine\AddIns\Loyalty\Punchh.dll.config")
+
+                        'Edit the Punchh.dll.config file to add the store location key found in the XLCLocationKey.csv file
+                        Dim filePath As String = "C:\Program Files (x86)\xpient Solutions\XPIENT Loyalty Controller\PipeLine\AddIns\Loyalty\Punchh.dll.config"
+
+                        ' Read all text
+                        Dim content As String = IO.File.ReadAllText(filePath)
+
+                        ' Replace text
+                        content = content.Replace("f2896d38fa3a6e248795d16bd5eafeba", LocationKey.ToString)
+
+                        ' Write back to file
+                        IO.File.WriteAllText(filePath, content)
+
+                        'Reset windos XLC service to apply changes
+                        Dim serviceName As String = "YourServiceName"
+                        Dim sc As New ServiceController(serviceName)
+
+                        Try
+                            ' Stop service if running
+                            If sc.Status <> ServiceControllerStatus.Stopped AndAlso sc.Status <> ServiceControllerStatus.StopPending Then
+                                sc.Stop()
+                                sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(30))
+                            End If
+
+                            ' Start service
+                            sc.Start()
+                            sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30))
+
+                            'MessageBox.Show("Service restarted successfully!")
+
+                        Catch ex As Exception
+                            MessageBox.Show("Error restarting XLC service: " & ex.Message)
+                        End Try
+
+                    End If
+
+
                     MsgBox("XLC installation complete!")
                 End If
 
             End If
 
-            'Xenial Sync Service
+            '------------------------------------------------------------------------------------------------------------------------------
+            'Xenial Sync Service-----------------------------------------------------------------------------------------------------------
             If Me.CB_XenialSync.Checked = True Then
                 'extract and Execute Xenial Sync Files
                 ExtractFromRAR("File", "Files\Common\xpient\XenialSync\InstallXenialSync.exe", "C:\xpient")
@@ -339,7 +560,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 MsgBox("XenyalSync service installation completed!")
             End If
 
-            'WinSCP
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'WinSCP-------------------------------------------------------------------------------------------------------------------------
             If Me.CB_WinSCP.Checked = True Then
                 'Extract and Execute WinSCP
                 ExtractFromRAR("File", "Files\Common\xpient\WinSCP-5.21.8-Setup.exe", "C:\xpient")
@@ -347,7 +569,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 MsgBox("WinSCP installation completed!")
             End If
 
-            'Google Chrome Installation
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'Google Chrome Installation-----------------------------------------------------------------------------------------------------
             If Me.CB_GC.Checked = True Then
                 'ExecuteCMD("cmd /c powershell -Command " & "Start-Process -FilePath " & "$env:TEMP\chrome_installer.exe" & " -ArgumentList '/silent', '/install' -Wait")
                 'MsgBox("Google Chrome installation completed!")
@@ -391,15 +614,15 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             End If
 
 
-
-            'Depletions
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'Depletions---------------------------------------------------------------------------------------------------------------------
             If Me.CB_Depletions.Checked = True Then
                 ExtractFromRAR("Directory", "Files\Common\temp\Depletions\", "C:\IRIS\Bin\HD Button\Depletions")
                 MsgBox("Depletions installation completed!")
 
             End If
-
-            'Fast Track
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'Fast Track---------------------------------------------------------------------------------------------------------------------
             If Me.CB_FastTrack.Checked = True Then
                 'Download Fastrack file.exe from FTP site and execute it (had to use cmd coreFTP command due appears download methond not working for large files)
                 ExecuteCMD("""c:\Program Files\CoreFTP\coreftp.exe"" -s -o -d ftp://bi_admin_ftp@starcorpus.net:nsd654159@starcorpus.net/Stores_Apps/FastTrackFiles/Fast_Track_PC_Software_Setup_2.27.exe -p C:\temp\")
@@ -430,8 +653,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 End Try
 
             End If
-
-            'DTIS
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'DTIS---------------------------------------------------------------------------------------------------------------------------
             If Me.CB_DTIS.Checked = True Then
                 'Download DTIS files from FTP site
                 DownloadFromFTP("Stores_Apps/FastTrackFiles/DTIS_Setup_V2.4.exe", "C:\temp\DTIS_Setup_V2.4.exe")
@@ -460,8 +683,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 End Try
 
             End If
-
-            'FTTLog Windows Task
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'FTTLog Windows Task------------------------------------------------------------------------------------------------------------
             If Me.CB_FTTLogTask.Checked = True Then
                 'download xml taSK FILE
                 DownloadFromFTP("Stores_Apps/FastTrackFiles/FTTLog.xml", "C:\temp\FTTLog.xml")
@@ -476,8 +699,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 ExecuteCMD("cmd /c powershell -Command() & ""Remove-Item " & " 'C:\temp\FTTLog.xml' -Recurse -Force" & "")
 
             End If
-
-            'Start MSSQL$XSIRIS Service
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'Start MSSQL$XSIRIS Service-----------------------------------------------------------------------------------------------------
             If Me.CB_Start_MSSQLXSIRIS_Service.Checked = True Then
                 'extract xml taSK FILE
                 ExtractFromRAR("File", "Files\Common\temp\Start_MSSQL$XSIRIS_Service.xml", "C:\temp")
@@ -492,8 +715,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 ExecuteCMD("cmd /c powershell -Command() & ""Remove-Item " & " 'C:\temp\Start_MSSQL$XSIRIS_Service.xml' -Recurse -Force" & "")
 
             End If
-
-            'R365 Starcorp/Carl's Jr Version Install
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'R365 Starcorp/Carl's Jr Version Install----------------------------------------------------------------------------------------
             If Me.CB_R365_SC.Checked = True Then
                 'Download R365 SC exe
                 DownloadFromFTP("/Stores_Apps/R365/SC/ComidaGP.PRO.26.6.0.102.zip", "C:\temp\ComidaGP.PRO.26.6.0.102.zip")
@@ -565,8 +788,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 End If
 
             End If
-
-            'R365 superiorstar/Hardees version Install
+            '-------------------------------------------------------------------------------------------------------------------------------
+            'R365 superiorstar/Hardees version Install--------------------------------------------------------------------------------------
             If Me.CB_R365_SS.Checked = True Then
                 'Download R365 SS exe
                 DownloadFromFTP("/Stores_Apps/R365/SS/ComidaInstaller24.50.0.exe", "C:\temp\ComidaInstaller24.50.0.exe")
