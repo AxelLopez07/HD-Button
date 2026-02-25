@@ -293,22 +293,23 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
 
                         'execute OLO installer with arguments and wait for installation to be done
                         Dim psi As New ProcessStartInfo()
-                        psi.FileName = "C:\Xpient\OLOw7.exe –IIS –POI –olocode " & OLOUserName.ToString & " –olopw " & OLOPassword.ToString & ""
+
+                        psi.FileName = "cmd.exe"
+                        psi.Arguments = "/c ""C:\xpient\OLOw7.exe –IIS –POI –olocode " & OLOUserName.ToString & " –olopw " & OLOPassword.ToString & """"
                         psi.UseShellExecute = True
-                        psi.Verb = "runas"
+                        psi.Verb = "runas"   ' Run as Administrator
+                        psi.WindowStyle = ProcessWindowStyle.Normal   ' optional
 
                         Try
                             Dim proc As Process = Process.Start(psi)
 
                             If proc IsNot Nothing Then
-                                proc.WaitForExit()   ' ⬅ This pauses your code until installer closes
-
+                                proc.WaitForExit()
                                 MsgBox("OLO Installation Complete!")
-
                             End If
 
                         Catch ex As Exception
-                            MessageBox.Show("User cancelled UAC prompt.")
+                            MessageBox.Show(ex.Message)
                         End Try
 
                     End If
