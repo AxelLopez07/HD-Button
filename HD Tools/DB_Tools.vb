@@ -14,6 +14,7 @@ Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
 Imports Amazon.Auth.AccessControlPolicy
 Imports Amazon.Runtime.Internal
 Imports Microsoft.Win32
+Imports MongoDB.Driver.Core.WireProtocol.Messages.Encoders.JsonEncoders
 Imports Newtonsoft.Json.Linq
 Imports SharpCompress.Archives
 Imports SharpCompress.Common
@@ -36,7 +37,7 @@ Public Class DB_Tools
 
                 ' Parse both versions
                 Dim localVersion As New Version(MainMenu.LabelVer.Text.ToString)
-                Dim remoteVersion As New Version(remoteVersionString)
+                Dim remoteVersion As New Version(RemoteVersionString)
 
                 ' Show the raw content
                 'MessageBox.Show("Remote version: [" & remoteVersion.ToString.Trim() & "]", "Version Found")
@@ -878,5 +879,86 @@ Public Class DB_Tools
         End Using
 
     End Sub
+    'Download LSIData database file for the Food Prep Tags application
+    Public Shared Sub DownloadLSIData(Franchise As String)
+
+        Dim FTPPath As String = Nothing
+
+        If Franchise = "CJ" Then
+            FTPPath = "Stores_Apps/FoodPrepTags/LastDBVersion/CarlsJr/LSIData.mdb"
+        End If
+        If Franchise = "HD" Then
+            FTPPath = "Stores_Apps/FoodPrepTags/LastDBVersion/Hardees/LSIData.mdb"
+        End If
+
+        Try
+            'Download LSIData database file to Reginfo folder Reg1
+            If Directory.Exists("C:\IRIS\RegInfo\Reg1\foodpreptags") Then
+                DownloadFromFTP(FTPPath.ToString, "C:\IRIS\RegInfo\Reg1\foodpreptags\LSIData.mdb")
+            Else
+                Directory.CreateDirectory("C:\IRIS\RegInfo\Reg1\foodpreptags")
+                DownloadFromFTP(FTPPath.ToString, "C:\IRIS\RegInfo\Reg1\foodpreptags\LSIData.mdb")
+            End If
+            'Download LSIData database file to Reginfo folder Reg2
+            If Directory.Exists("C:\IRIS\RegInfo\Reg2\foodpreptags") Then
+                DownloadFromFTP(FTPPath.ToString, "C:\IRIS\RegInfo\Reg2\foodpreptags\LSIData.mdb")
+            Else
+                Directory.CreateDirectory("C:\IRIS\RegInfo\Reg2\foodpreptags")
+                DownloadFromFTP(FTPPath.ToString, "C:\IRIS\RegInfo\Reg2\foodpreptags\LSIData.mdb")
+            End If
+
+
+            ''Copy local downloaded LSIData.mdb file to remote registers Reg1 and Reg2
+            'Dim remotePC As String = "192.168.1.101"
+            'Dim username As String = "iris_admin"
+            'Dim password As String = "STCOXp13nt@dmin"
+
+            'Dim sourceFile As String = "C:\IRIS\RegInfo\Reg1\foodpreptags\LSIData.mdb"
+            'Dim destinationFile As String = "\\" & remotePC & "\C$\Users\IRIS_USER\AppData\Local\VirtualStore\Programdata\Lucas\FoodPreptags\LSIData.mdb"
+
+            ''Connect to remote admin share
+            'Dim psi As New ProcessStartInfo()
+
+            'psi.FileName = "cmd.exe"
+            'psi.Arguments = "/c net use \\" & remotePC & "\C$ /user:" & username & " " & password
+            'psi.CreateNoWindow = True
+            'psi.UseShellExecute = False
+            'psi.RedirectStandardOutput = True
+            'psi.RedirectStandardError = True
+
+            'Dim p As Process = Process.Start(psi)
+            'p.WaitForExit()
+
+            ''Optional: read command output
+            ''Dim output As String = p.StandardOutput.ReadToEnd()
+            ''Dim errors As String = p.StandardError.ReadToEnd()
+
+            ''Console.WriteLine(output)
+            ''Console.WriteLine(errors)
+
+            ''Copy file
+            'File.Copy(sourceFile, destinationFile, True)
+
+            MsgBox("LSIData.mdb file downloaded to reginfo folders correctly")
+
+            ''Disconnect network share
+            'Dim psiDisconnect As New ProcessStartInfo()
+
+            'psiDisconnect.FileName = "cmd.exe"
+            'psiDisconnect.Arguments = "/c net use \\" & remotePC & "\C$ /delete /y"
+            'psiDisconnect.CreateNoWindow = True
+            'psiDisconnect.UseShellExecute = False
+
+            'Process.Start(psiDisconnect).WaitForExit()
+
+        Catch ex As Exception
+
+            MsgBox("ERROR: " & ex.Message)
+
+        End Try
+
+    End Sub
+
+
 
 End Class

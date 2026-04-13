@@ -30,7 +30,9 @@ Public Class MainMenu
         "Rebuild CKE Data",
         "Pin pads/Registers ping",
         "POS Installation tools",
-        "Download Chrome passwords & bookmarks"
+        "Download Chrome passwords & bookmarks",
+        "Download Food prep tags LSIData databse(CJ)",
+        "Download Food prep tags LSIData databse(HD)"
     }
 
     Public Sub MainMenu_Forms(optionSelected As String)
@@ -81,6 +83,10 @@ Public Class MainMenu
             Case "Download Chrome passwords & bookmarks"
                 DownloadChromeData("Credentials")
                 DownloadChromeData("Bookmarks")
+            Case "Download Food prep tags LSIData databse(CJ)"
+                DownloadLSIData("CJ")
+            Case "Download Food prep tags LSIData databse(HD)"
+                DownloadLSIData("HD")
 
         End Select
         Me.Show()
