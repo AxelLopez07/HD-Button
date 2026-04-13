@@ -441,11 +441,11 @@ LoyaltyCustomValue6="
                     End If
 
                     'Download XLC installer from FTP site
-                    DownloadFromFTP("Stores_Apps/XLC/XLC_2.5.0.319.exe", "C:\temp\XLC_2.5.0.319.exe")
+                    DownloadFromFTP("Stores_Apps/XLC/XLC_2.5.0.325.exe", "C:\temp\XLC_2.5.0.325.exe")
 
                     'Execute XLC installer with arguments and wait for installation to be done
                     Dim psi As New ProcessStartInfo()
-                    psi.FileName = "C:\temp\XLC_2.5.0.319.exe"
+                    psi.FileName = "C:\temp\XLC_2.5.0.325.exe"
                     psi.Arguments = "/COMPONENTS=Punchh /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /RESTARTEXITCODE=30103"   'Arguments go here
                     psi.Verb = "runas"
                     psi.UseShellExecute = True
