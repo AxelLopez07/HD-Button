@@ -293,9 +293,6 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                         'Download OLO installer
                         DownloadFromFTP("Stores_Apps/OLO/OLOw7.exe", "C:\Xpient\OLOw7.exe")
 
-                        'Install OLO command
-                        'ExecuteCMD("cmd /c C:\xpient\OLOw7.exe –IIS –POI –olocode " & OLOUserName.ToString & " –olopw " & OLOPassword.ToString & "")
-
                         'execute OLO installer with arguments and wait for installation to be done
                         Dim psi As New ProcessStartInfo()
 
@@ -555,7 +552,11 @@ LoyaltyCustomValue6="
             'Xenial Sync Service-----------------------------------------------------------------------------------------------------------
             If Me.CB_XenialSync.Checked = True Then
                 'extract and Execute Xenial Sync Files
-                ExtractFromRAR("File", "Files\Common\xpient\XenialSync\InstallXenialSync.exe", "C:\xpient")
+                'ExtractFromRAR("File", "Files\Common\xpient\XenialSync\InstallXenialSync.exe", "C:\xpient")
+
+                'Download XenialSync installer
+                DownloadFromFTP("Stores_Apps/XenialSync/InstallXenialSync.exe", "C:\Xpient\InstallXenialSync.exe")
+
                 ExecuteCMD("cmd /c C:\xpient\InstallXenialSync.exe")
                 MsgBox("XenyalSync service installation completed!")
             End If
