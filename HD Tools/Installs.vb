@@ -102,6 +102,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
     'INSTALLS Button
     Private Async Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Try
+
             Me.Button1.Enabled = False
 
             '-------------------------------------------------------------------------------------------------------------------------------
@@ -336,12 +337,12 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                     Dim fullPath As String = Path.Combine(folderPath, fileName & extension)
                     Dim fullPath2 As String = Path.Combine(folderPath2, fileName & extension)
                     Dim fileContent As String = "[Loyalty]
-LoyaltyCustomValue4=7573
-LoyaltyCustomValue7=1
-LoyaltyCustomValue8=60
-LoyaltyCustomValue9=11/3/2021 10:14:46 AM
-LoyaltyCustomValue5=
-LoyaltyCustomValue6="
+                    LoyaltyCustomValue4=7573
+                    LoyaltyCustomValue7=1
+                    LoyaltyCustomValue8=60
+                    LoyaltyCustomValue9=11/3/2021 10:14:46 AM
+                    LoyaltyCustomValue5=
+                    LoyaltyCustomValue6="
 
                     File.WriteAllText(fullPath, fileContent)
                     File.WriteAllText(fullPath2, fileContent)
