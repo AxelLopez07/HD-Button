@@ -38,9 +38,9 @@ Partial Class MainMenu
         LabelVer.AutoSize = True
         LabelVer.Location = New Point(443, 508)
         LabelVer.Name = "LabelVer"
-        LabelVer.Size = New Size(40, 15)
+        LabelVer.Size = New Size(46, 15)
         LabelVer.TabIndex = 41
-        LabelVer.Text = "1.0.1.9"
+        LabelVer.Text = "1.0.1.10"
         LabelVer.TextAlign = ContentAlignment.MiddleRight
         ' 
         ' LabelPhoneNumber
