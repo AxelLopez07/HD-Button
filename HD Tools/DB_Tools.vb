@@ -460,7 +460,7 @@ Public Class DB_Tools
                 Dim outputFilePath As String = Path.Combine(Output.ToString, Path.GetFileName(filePathToExtract))
 
                 ' Extract the specific file
-                Using archive As IArchive = ArchiveFactory.Open(rarFilePath)
+                Using archive As IArchive = ArchiveFactory.OpenArchive(rarFilePath)
                     For Each entry In archive.Entries
                         If Not entry.IsDirectory AndAlso entry.Key.Equals(filePathToExtract, StringComparison.OrdinalIgnoreCase) Then
                             entry.WriteToFile(outputFilePath)
@@ -481,7 +481,7 @@ Public Class DB_Tools
                 Dim outputDirectory As String = Output.ToString
 
                 ' Extract the specific directory
-                Using archive As IArchive = ArchiveFactory.Open(rarFilePath)
+                Using archive As IArchive = ArchiveFactory.OpenArchive(rarFilePath)
                     For Each entry In archive.Entries
                         If Not entry.IsDirectory AndAlso entry.Key.StartsWith(directoryToExtract, StringComparison.OrdinalIgnoreCase) Then
                             ' Create the full output path
