@@ -551,8 +551,6 @@ LoyaltyCustomValue6="
             '------------------------------------------------------------------------------------------------------------------------------
             'Xenial Sync Service-----------------------------------------------------------------------------------------------------------
             If Me.CB_XenialSync.Checked = True Then
-                'extract and Execute Xenial Sync Files
-                'ExtractFromRAR("File", "Files\Common\xpient\XenialSync\InstallXenialSync.exe", "C:\xpient")
 
                 'Download XenialSync installer
                 DownloadFromFTP("Stores_Apps/XenialSync/InstallXenialSync.exe", "C:\Xpient\InstallXenialSync.exe")
