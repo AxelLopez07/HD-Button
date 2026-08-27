@@ -597,8 +597,6 @@ Public Class DB_Tools
             MsgBox(ex.ToString)
         End Try
     End Sub
-
-
     ' Store tokens in memory (or securely in a file/database)
     Public AccessToken As String = ""
     Public RefreshToken As String = ""
@@ -736,7 +734,7 @@ Public Class DB_Tools
         End Using
 
     End Sub
-
+    'Download google chrome bookmars and passwords from FTP server
     Public Shared Sub DownloadChromeData(download As String)
         Try
             Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
@@ -809,7 +807,7 @@ Public Class DB_Tools
         End Try
 
     End Sub
-
+    'download specific file from FTP server to local path method
     Public Shared Sub DownloadFromFTP(File As String, LocalPath As String)
         Try
             'Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
@@ -818,11 +816,6 @@ Public Class DB_Tools
             Dim ftpUser As String = "bi_admin_ftp@starcorpus.net"
             Dim ftpPass As String = "nsd654159"
             Dim FTP_FilePath As String = ftpHost & File
-
-            'create patch if not exist C:\Temp\ChromeData
-            'If Not Directory.Exists("C:\Temp\InstallApps") Then
-            'Directory.CreateDirectory("C:\Temp\InstallApps")
-            'End If
 
             'download parameters
             Dim request As FtpWebRequest = CType(WebRequest.Create(FTP_FilePath), FtpWebRequest)
@@ -835,7 +828,6 @@ Public Class DB_Tools
             request.Timeout = 600000
             request.ReadWriteTimeout = 600000
 
-
             'download file
             Using response As FtpWebResponse = CType(request.GetResponse(), FtpWebResponse)
                 Using responseStream As Stream = response.GetResponseStream()
@@ -847,6 +839,125 @@ Public Class DB_Tools
 
         Catch ex As Exception
             MsgBox("Error in downloading File: " & File & ex.ToString)
+        End Try
+
+    End Sub
+    'Download all files from a specific folder on the FTP server to a local folder
+    Public Shared Sub DownloadFolderFromFTP(FTPFolder As String, LocalFolder As String)
+
+        Try
+
+            Dim ftpHost As String = "ftp://starcorpus.net/"
+            Dim ftpUser As String = "bi_admin_ftp@starcorpus.net"
+            Dim ftpPass As String = "nsd654159"
+
+            ' Make sure the local folder exists
+            If Not Directory.Exists(LocalFolder) Then
+                Directory.CreateDirectory(LocalFolder)
+            End If
+
+            ' FTP folder path
+            Dim FTPFolderPath As String = ftpHost & FTPFolder
+
+            ' Get directory listing
+            Dim request As FtpWebRequest =
+            CType(WebRequest.Create(FTPFolderPath), FtpWebRequest)
+
+            request.Method = WebRequestMethods.Ftp.ListDirectory
+            request.Credentials = New NetworkCredential(ftpUser, ftpPass)
+            request.UseBinary = True
+            request.UsePassive = True
+            request.KeepAlive = False
+            request.Timeout = 600000
+            request.ReadWriteTimeout = 600000
+
+            Dim files As New List(Of String)
+
+            Using response As FtpWebResponse =
+            CType(request.GetResponse(), FtpWebResponse)
+
+                Using responseStream As Stream = response.GetResponseStream()
+                    Using reader As New StreamReader(responseStream)
+
+                        While Not reader.EndOfStream
+                            Dim fileName As String = reader.ReadLine()
+
+                            If Not String.IsNullOrWhiteSpace(fileName) Then
+                                files.Add(fileName)
+                            End If
+
+                        End While
+
+                    End Using
+                End Using
+
+            End Using
+
+
+            ' Download every file
+            For Each fileName As String In files
+
+                Try
+
+                    Dim FTPFilePath As String = ftpHost &
+                                            FTPFolder.TrimEnd("/"c) &
+                                            "/" &
+                                            fileName
+
+                    Dim LocalFilePath As String =
+                    Path.Combine(LocalFolder, fileName)
+
+                    Dim downloadRequest As FtpWebRequest =
+                    CType(WebRequest.Create(FTPFilePath), FtpWebRequest)
+
+                    downloadRequest.Method =
+                    WebRequestMethods.Ftp.DownloadFile
+
+                    downloadRequest.Credentials =
+                    New NetworkCredential(ftpUser, ftpPass)
+
+                    downloadRequest.UseBinary = True
+                    downloadRequest.UsePassive = True
+                    downloadRequest.KeepAlive = False
+                    downloadRequest.Timeout = 600000
+                    downloadRequest.ReadWriteTimeout = 600000
+
+                    Using response As FtpWebResponse =
+                    CType(downloadRequest.GetResponse(), FtpWebResponse)
+
+                        Using responseStream As Stream =
+                        response.GetResponseStream()
+
+                            ' FileMode.Create automatically replaces the existing file
+                            Using fs As New FileStream(
+                            LocalFilePath,
+                            FileMode.Create,
+                            FileAccess.Write)
+
+                                responseStream.CopyTo(fs)
+
+                            End Using
+
+                        End Using
+
+                    End Using
+
+                    'Debug.WriteLine("Downloaded: " & fileName)
+
+                Catch ex As Exception
+
+                    Debug.WriteLine(
+                    "Error downloading " & fileName &
+                    ": " & ex.Message)
+
+                End Try
+
+            Next
+
+        Catch ex As Exception
+
+            MsgBox("Error accessing FTP folder: " & ex.ToString)
+
         End Try
 
     End Sub

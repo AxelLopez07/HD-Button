@@ -110,19 +110,25 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             If Me.RBUpdatesCarls.Checked = True Then
 
                 '----------------Extract STCO.exe File
-                ExtractFromRAR("File", "Files\Common\temp\STCO.exe", "C:\temp")
+                'ExtractFromRAR("File", "Files\Common\temp\STCO.exe", "C:\temp")
+                'Download STCO.exe from FTP site to C:\Temp folder
+                DownloadFromFTP("Stores_Apps/General_Files/Common/temp/STCO.exe", "C:\Temp\STCO.exe")
 
                 '-----------------Stage STCO file updates (1st Updates)
                 ExecuteCMD("cmd /c C:\Temp\STCO.exe")
 
                 '----------------Extract Updated Files (2nd updates)
-                ExtractFromRAR("Directory", "Files\Carls\", "C:\")
+                'ExtractFromRAR("Directory", "Files\Carls\", "C:\")
+                'Download folder from FTP site (Carl's Jr)
+                DownloadFolderFromFTP("Stores_Apps/BOC_Installs/Carls/", "C:\")
 
-                '-----------Run "DatabaseUpdate.sql" file (check file for details)
+                '----------- download and Run "DatabaseUpdate.sql" file (check file for details)
+                'DownloadFromFTP("Stores_Apps/BOC_Installs/Carls/Temp/DatabaseUpdates.sql", "C:\Temp\DatabaseUpdates.sql")
                 ExecuteCMD("cmd /c sqlcmd -S localhost\XSIRIS -s, -W -i C:\Temp\DatabaseUpdates.sql")
+                'delete the DatabaseUpdates.sql file after execution
                 ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\DatabaseUpdates.sql' -Recurse -Force")
 
-                '-----------extract and Run sp_datakey values_custom update
+                '-----------Download and Run sp_datakey values_custom update
                 ExtractFromRAR("File", "Files\Common\temp\sp_datakeyvalues_custom.sql", "C:\temp")
                 ExecuteCMD("cmd /c sqlcmd -S localhost\XSIRIS -s, -W -i C:\Temp\sp_datakeyvalues_custom.sql")
                 ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\sp_datakeyvalues_custom.sql' -Recurse -Force")
@@ -176,7 +182,9 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
 
                 '----------------Extract STCO.exe File
                 'UnrarResourceFile(My.Resources.STCO_exe, "C:\")
-                ExtractFromRAR("File", "Common\temp\STCO.exe", "C:\temp")
+                'ExtractFromRAR("File", "Common\temp\STCO.exe", "C:\temp")
+                'Download STCO.exe from FTP site to C:\Temp folder
+                DownloadFromFTP("Stores_Apps/General_Files/Common/temp/STCO.exe", "C:\Temp\STCO.exe")
 
                 '-----------------Stage STCO file updates (1st Updates)
                 ExecuteCMD("cmd /c C:\Temp\STCO.exe")
