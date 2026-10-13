@@ -99,7 +99,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             MessageBox.Show("Be Careful!!", "Change Store Number")
         End If
     End Sub
-    'INSTALLS Button
+    'INSTALLS Button Asyncrone
     Private Async Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Try
 
@@ -118,24 +118,21 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
 
                 '----------------Download Updated Files (2nd updates)
                 FTP_Transfer("download", "folder", "Stores_Apps/BOC_Installs/Carls/", "C:\")
+                FTP_Transfer("download", "folder", "Stores_Apps/BOC_Installs/Common/", "C:\")
 
-                '----------- download and Run "DatabaseUpdate.sql" file (check file for details)
-                'DownloadFromFTP("Stores_Apps/BOC_Installs/Carls/Temp/DatabaseUpdates.sql", "C:\Temp\DatabaseUpdates.sql")
+                '----------- Run "DatabaseUpdate.sql" file (check file for details) and then delete
                 ExecuteCMD("cmd /c sqlcmd -S localhost\XSIRIS -s, -W -i C:\Temp\DatabaseUpdates.sql")
-                'delete the DatabaseUpdates.sql file after execution
                 ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\DatabaseUpdates.sql' -Recurse -Force")
 
-                '-----------Download and Run sp_datakey values_custom update
-                ExtractFromRAR("File", "Files\Common\temp\sp_datakeyvalues_custom.sql", "C:\temp")
+                '----------- Run sp_datakey values_custom update and then delete
                 ExecuteCMD("cmd /c sqlcmd -S localhost\XSIRIS -s, -W -i C:\Temp\sp_datakeyvalues_custom.sql")
                 ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\sp_datakeyvalues_custom.sql' -Recurse -Force")
 
                 '-----------Import sites to CoreFPT.exe (Carl's Jr's) as iris_admin windows user
                 ExecuteCMD("cmd /c " & "c:\program files\coreftp\coreftp.exe" & " -import " & "c:\Temp\CoreFTP_sites")
 
-                'Update STORENUM in the TPE_SVS.ini file
+                'Update STORENUM in the TPE_SVS.ini file and then delete
                 ExecuteCMD("cmd /c C:\Temp\UpdateTPE_SVS_Carls.bat")
-                'ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\StoreNum.txt' -Recurse -Force")
                 ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\UpdateTPE_SVS_Carls.bat' -Recurse -Force")
 
                 '----------------Register WIndows Tasks
@@ -149,16 +146,14 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 ExecuteCMD("cmd /c schtasks /create /tn " & "PSI_Exporter_2" & " /xml " & "C:\Temp\PSI_Exporter_2.xml" & " /ru iris_admin /rp STCOXp13nt@dmin")
                 ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\PSI_Exporter_2.xml' -Recurse -Force")
 
-                'Register Services running
+                'Register Services running and then delete
                 ExecuteCMD("cmd /c C:\Temp\services_running_registration.bat")
                 ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\services_running_registration.bat' -Recurse -Force")
 
-                'Extract and Execute NewFinFileXpient.vbs via cmd to update new Fin File store procedures
-                ExtractFromRAR("Directory", "Files\Common\xpient\FinFileLayoutUpdate\", "C:\xpient")
+                'Execute NewFinFileXpient.vbs via cmd to update new Fin File store procedures
                 ExecuteCMD("cmd /c C:\xpient\InstallNewFinFile.vbs")
 
-                'Extract and Execute UpdateAppini_GiftCard_Scanning.vbs via cmd to update new Gift cards with the Scanners
-                ExtractFromRAR("File", "Files\Common\temp\UpdateAppini_GiftCard_Scanning.vbs", "C:\xpient")
+                'Execute UpdateAppini_GiftCard_Scanning.vbs via cmd to update new Gift cards with the Scanners
                 ExecuteCMD("cmd /c C:\xpient\UpdateAppini_GiftCard_Scanning.vbs")
 
                 'Turn OFF windows firewall
@@ -177,30 +172,27 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             'HARDEES------------------------------------------------------------------------------------------------------------------------
             If Me.RBUpdatesHardees.Checked = True Then
 
-                '----------------Extract STCO.exe File
-                'UnrarResourceFile(My.Resources.STCO_exe, "C:\")
-                'ExtractFromRAR("File", "Common\temp\STCO.exe", "C:\temp")
+                '---------------- STCO.exe File
                 'Download STCO.exe from FTP site to C:\Temp folder
-                DownloadFromFTP("Stores_Apps/General_Files/Common/temp/STCO.exe", "C:\Temp\STCO.exe")
+                FTP_Transfer("download", "file", "Stores_Apps/General_Files/Common/temp/STCO.exe", "C:\Temp\STCO.exe")
 
                 '-----------------Stage STCO file updates (1st Updates)
                 ExecuteCMD("cmd /c C:\Temp\STCO.exe")
 
-                '----------------Extract Updated Files (2nd updates)
-                'UnrarResourceFile(My.Resources.Hardees, "C:\")
-                ExtractFromRAR("Directory", "Hardees\", "C:\")
+                '----------------download Updated Files (2nd updates)
+                FTP_Transfer("download", "folder", "Stores_Apps/BOC_Installs/Hardees/", "C:\")
+                FTP_Transfer("download", "folder", "Stores_Apps/BOC_Installs/Common/", "C:\")
 
                 '-----------Run "DatabaseUpdate.sql" file check file for details
                 ExecuteCMD("cmd /c sqlcmd -S localhost\XSIRIS -s, -W -i C:\Temp\DatabaseUpdates.sql")
                 ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\DatabaseUpdates.sql' -Recurse -Force")
 
-                '-----------extract and Run sp_datakey values_custom update
-                ExtractFromRAR("File", "Files\Common\temp\sp_datakeyvalues_custom.sql", "C:\temp")
+                '----------- Run sp_datakey values_custom update and then delete
                 ExecuteCMD("cmd /c sqlcmd -S localhost\XSIRIS -s, -W -i C:\Temp\sp_datakeyvalues_custom.sql")
                 ExecuteCMD("cmd /c powershell -Command " & "Remove-Item 'C:\Temp\sp_datakeyvalues_custom.sql' -Recurse -Force")
 
                 '-----------Import sites to CoreFPT.exe (Hardee's)
-                ExecuteCMD("cmd /c " & "c:\program files\coreftp\coreftp.exe" & " -import " & "c:\Temp\new_MBM_site")
+                ExecuteCMD("cmd /c " & "c:\program files\coreftp\coreftp.exe" & " -import " & "c:\Temp\CoreFTP_sites")
 
                 'Update STORENUM in the TPE_SVS.ini file
                 ExecuteCMD("cmd /c C:\Temp\UpdateTPE_SVS.bat")
@@ -221,12 +213,10 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 'Register Services running
                 ExecuteCMD("cmd /c C:\Temp\services_running_registration.bat")
 
-                'Extract and execute NewFinFileXpient.vbs via cmd to update new Fin File store procedures
-                ExtractFromRAR("Directory", "Common\xpient\FinFileLayoutUpdate\", "C:\xpient")
+                'execute NewFinFileXpient.vbs via cmd to update new Fin File store procedures
                 ExecuteCMD("cmd /c C:\xpient\InstallNewFinFile.vbs")
 
-                'Extract and Execute UpdateAppini_GiftCard_Scanning.vbs via cmd to update new Gift cards with the Scanners
-                ExtractFromRAR("File", "Files\Common\temp\UpdateAppini_GiftCard_Scanning.vbs", "C:\xpient")
+                'Execute UpdateAppini_GiftCard_Scanning.vbs via cmd to update new Gift cards with the Scanners
                 ExecuteCMD("cmd /c C:\xpient\UpdateAppini_GiftCard_Scanning.vbs")
 
                 'Turn OFF windows firewall
