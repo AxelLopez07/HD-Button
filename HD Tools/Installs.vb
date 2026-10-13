@@ -109,18 +109,15 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             'CARL'S jr's--------------------------------------------------------------------------------------------------------------------
             If Me.RBUpdatesCarls.Checked = True Then
 
-                '----------------Extract STCO.exe File
-                'ExtractFromRAR("File", "Files\Common\temp\STCO.exe", "C:\temp")
+                '---------------- STCO.exe File
                 'Download STCO.exe from FTP site to C:\Temp folder
-                DownloadFromFTP("Stores_Apps/General_Files/Common/temp/STCO.exe", "C:\Temp\STCO.exe")
+                FTP_Transfer("download", "file", "Stores_Apps/General_Files/Common/temp/STCO.exe", "C:\Temp\STCO.exe")
 
                 '-----------------Stage STCO file updates (1st Updates)
                 ExecuteCMD("cmd /c C:\Temp\STCO.exe")
 
-                '----------------Extract Updated Files (2nd updates)
-                'ExtractFromRAR("Directory", "Files\Carls\", "C:\")
-                'Download folder from FTP site (Carl's Jr)
-                DownloadFolderFromFTP("Stores_Apps/BOC_Installs/Carls/", "C:\")
+                '----------------Download Updated Files (2nd updates)
+                FTP_Transfer("download", "folder", "Stores_Apps/BOC_Installs/Carls/", "C:\")
 
                 '----------- download and Run "DatabaseUpdate.sql" file (check file for details)
                 'DownloadFromFTP("Stores_Apps/BOC_Installs/Carls/Temp/DatabaseUpdates.sql", "C:\Temp\DatabaseUpdates.sql")
