@@ -14,7 +14,32 @@ Imports SharpCompress.Readers
 Imports System.ServiceProcess
 
 Public Class Installs
-    'XDMB service
+
+    'select the no updates and files radio button by default
+    Private Sub Installs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.RadioButton1.Checked = True
+
+    End Sub
+    'highlight the selected radio button and unhighlight the others
+    Private Sub RadioButton1_CheckedChanged(sender As Object, e As EventArgs) Handles RadioButton1.CheckedChanged
+        Me.RadioButton1.BackColor = Color.LightBlue
+        Me.RBUpdatesCarls.BackColor = DefaultBackColor
+        Me.RBUpdatesHardees.BackColor = DefaultBackColor
+    End Sub
+    'highlight the selected radio button and unhighlight the others
+    Private Sub RBUpdatesHardees_CheckedChanged(sender As Object, e As EventArgs) Handles RBUpdatesHardees.CheckedChanged
+        Me.RBUpdatesHardees.BackColor = Color.LightBlue
+        Me.RadioButton1.BackColor = DefaultBackColor
+        Me.RBUpdatesCarls.BackColor = DefaultBackColor
+    End Sub
+    'highlight the selected radio button and unhighlight the others
+    Private Sub RBUpdatesCarls_CheckedChanged(sender As Object, e As EventArgs) Handles RBUpdatesCarls.CheckedChanged
+        Me.RBUpdatesCarls.BackColor = Color.LightBlue
+        Me.RBUpdatesHardees.BackColor = DefaultBackColor
+        Me.RadioButton1.BackColor = DefaultBackColor
+    End Sub
+
+    'XDMB service button
     Private Sub DMB_Click(sender As Object, e As EventArgs) Handles DMB.Click
         Try
             'check if XDMB service exists on the database
@@ -287,7 +312,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                         End If
 
                         'Download OLO installer
-                        DownloadFromFTP("Stores_Apps/OLO/OLOw7.exe", "C:\Xpient\OLOw7.exe")
+                        FTP_Transfer("download", "file", "Stores_Apps/OLO/OLOw7.exe", "C:\Temp\OLOw7.exe")
 
                         'execute OLO installer with arguments and wait for installation to be done
                         Dim psi As New ProcessStartInfo()
@@ -434,7 +459,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                     End If
 
                     'Download XLC installer from FTP site
-                    DownloadFromFTP("Stores_Apps/XLC/XLC_2.5.0.325.exe", "C:\temp\XLC_2.5.0.325.exe")
+                    FTP_Transfer("download", "file", "Stores_Apps/XLC/XLC_2.5.0.325.exe", "C:\Temp\XLC_2.5.0.325.exe")
 
                     'Execute XLC installer with arguments and wait for installation to be done
                     Dim psi As New ProcessStartInfo()
@@ -495,13 +520,13 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                     Else
 
                         'Download ddisc.LIC (Lincese) file for the XLC installation to the iris linceses folder path
-                        DownloadFromFTP("Stores_Apps/XLC/ddisc.lic", "c:\iris\Licenses\ddisc.lic")
+                        FTP_Transfer("download", "file", "Stores_Apps/XLC/ddisc.lic", "c:\iris\Licenses\ddisc.lic")
 
                         'Download XLC.LICX (Lincese) file for the XLC installation to the XLC lincense folder path
-                        DownloadFromFTP("Stores_Apps/XLC/XLC.licx", "c:\Program Files (x86)\xpient Solutions\XPIENT Loyalty Controller\Licenses\XLC.licx")
+                        FTP_Transfer("download", "file", "Stores_Apps/XLC/XLC.licx", "c:\Program Files (x86)\xpient Solutions\XPIENT Loyalty Controller\Licenses\XLC.licx")
 
                         'download Punchh.dll.config file to the XL installation folder path
-                        DownloadFromFTP("Stores_Apps/XLC/Punchh.dll.config", "C:\Program Files (x86)\xpient Solutions\XPIENT Loyalty Controller\PipeLine\AddIns\Loyalty\Punchh.dll.config")
+                        FTP_Transfer("download", "file", "Stores_Apps/XLC/Punchh.dll.config", "C:\Program Files (x86)\xpient Solutions\XPIENT Loyalty Controller\PipeLine\AddIns\Loyalty\Punchh.dll.config")
 
                         'Edit the Punchh.dll.config file to add the store location key found in the XLCLocationKey.csv file
                         Dim filePath As String = "C:\Program Files (x86)\xpient Solutions\XPIENT Loyalty Controller\PipeLine\AddIns\Loyalty\Punchh.dll.config"
@@ -549,7 +574,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             If Me.CB_XenialSync.Checked = True Then
 
                 'Download XenialSync installer
-                DownloadFromFTP("Stores_Apps/XenialSync/InstallXenialSync.exe", "C:\Xpient\InstallXenialSync.exe")
+                FTP_Transfer("download", "file", "Stores_Apps/XenialSync/InstallXenialSync.exe", "C:\Xpient\InstallXenialSync.exe")
 
                 ExecuteCMD("cmd /c C:\xpient\InstallXenialSync.exe")
                 MsgBox("XenyalSync service installation completed!")
@@ -558,8 +583,8 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             '-------------------------------------------------------------------------------------------------------------------------------
             'WinSCP-------------------------------------------------------------------------------------------------------------------------
             If Me.CB_WinSCP.Checked = True Then
-                'Extract and Execute WinSCP
-                ExtractFromRAR("File", "Files\Common\xpient\WinSCP-5.21.8-Setup.exe", "C:\xpient")
+                'download and Execute WinSCP
+                FTP_Transfer("download", "file", "Stores_Apps/WinSCP/WinSCP-5.21.8-Setup.exe", "C:\Xpient\WinSCP-5.21.8-Setup.exe")
                 ExecuteCMD("cmd /c C:\xpien\WinSCP-5.21.8-Setup.exe")
                 MsgBox("WinSCP installation completed!")
             End If
@@ -612,7 +637,15 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             '-------------------------------------------------------------------------------------------------------------------------------
             'Depletions---------------------------------------------------------------------------------------------------------------------
             If Me.CB_Depletions.Checked = True Then
-                ExtractFromRAR("Directory", "Files\Common\temp\Depletions\", "C:\IRIS\Bin\HD Button\Depletions")
+                'if path not exist, create it
+                If Directory.Exists("C:\Program Files (x86)\Olo") Then
+                    'folder exists, do nothing
+                Else
+                    Directory.CreateDirectory("C:\IRIS\Bin\HD Button\Depletions")
+                End If
+                'download Depletions files from FTP site and extract them to the Depletions folder
+                FTP_Transfer("download", "folder", "Stores_Apps/BOC_Installs/Common/temp/Depletions/", "C:\IRIS\Bin\HD Button\Depletions\")
+
                 MsgBox("Depletions installation completed!")
 
             End If
@@ -635,11 +668,11 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                         proc.WaitForExit()   ' ⬅ This pauses your code until installer closes
 
                         'Download extra Fast track Files after installation
-                        DownloadFromFTP("Stores_Apps/FastTrackFiles/CKERTD.bat", "C:\programdata\Fast Track Software Suite\CKERTD.bat")
-                        DownloadFromFTP("Stores_Apps/FastTrackFiles/fttparam060420carls.spd", "C:\programdata\Fast Track Software Suite\fttparam060420carls.spd")
-                        DownloadFromFTP("Stores_Apps/FastTrackFiles/fttparam070720hardees.spd", "C:\programdata\Fast Track Software Suite\fttparam070720hardees.spd")
+                        FTP_Transfer("download", "file", "Stores_Apps/FastTrackFiles/CKERTD.bat", "C:\programdata\Fast Track Software Suite\CKERTD.bat")
+                        FTP_Transfer("download", "file", "Stores_Apps/FastTrackFiles/fttparam060420carls.spd", "C:\programdata\Fast Track Software Suite\fttparam060420carls.spd")
+                        FTP_Transfer("download", "file", "Stores_Apps/FastTrackFiles/fttparam070720hardees.spd", "C:\programdata\Fast Track Software Suite\fttparam070720hardees.spd")
 
-                        MsgBox("Fast Track Installation Completed!, Note: the site and parameters set up needs to be done manually!")
+                        MsgBox("Fast Track Installation Completed!, NOTE: the site and parameters set up needs to be done manually!")
 
                     End If
 
@@ -652,9 +685,9 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             'DTIS---------------------------------------------------------------------------------------------------------------------------
             If Me.CB_DTIS.Checked = True Then
                 'Download DTIS files from FTP site
-                DownloadFromFTP("Stores_Apps/FastTrackFiles/DTIS_Setup_V2.4.exe", "C:\temp\DTIS_Setup_V2.4.exe")
+                FTP_Transfer("download", "file", "Stores_Apps/FastTrackFiles/DTIS_Setup_V2.4.exe", "C:\temp\DTIS_Setup_V2.4.exe")
 
-                'execute Fastrack installer and wait for installation to be done
+                'execute DTIS installer and wait for installation to be done
                 Dim psi As New ProcessStartInfo()
                 psi.FileName = "C:\temp\DTIS_Setup_V2.4.exe"
                 psi.UseShellExecute = True
@@ -667,7 +700,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                         proc.WaitForExit()   ' ⬅ This pauses your code until installer closes
 
                         'download DTIS template file
-                        DownloadFromFTP("Stores_Apps/FastTrackFiles/templates/DTIS2.xml", "C:\programdata\Fast Track Software Suite\templates\DTIS2.xml")
+                        FTP_Transfer("download", "file", "Stores_Apps/FastTrackFiles/templates/DTIS2.xml", "C:\programdata\Fast Track Software Suite\templates\DTIS2.xml")
 
                         MsgBox("DTIS installation completed!, Note: the DTIS IP address and layout set up needs to be done manually")
 
@@ -682,7 +715,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             'FTTLog Windows Task------------------------------------------------------------------------------------------------------------
             If Me.CB_FTTLogTask.Checked = True Then
                 'download xml taSK FILE
-                DownloadFromFTP("Stores_Apps/FastTrackFiles/FTTLog.xml", "C:\temp\FTTLog.xml")
+                FTP_Transfer("download", "file", "Stores_Apps/FastTrackFiles/FTTLog.xml", "C:\temp\FTTLog.xml")
 
                 'Delete task from Schedule if exists already
                 ExecuteCMD("cmd /c schtasks /delete /tn " & "FTTLog" & " /f")
@@ -690,15 +723,15 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 ExecuteCMD("cmd /c schtasks /create /tn " & "FTTLog" & " /xml " & "C:\Temp\FTTLog.xml" & " /ru iris_admin /rp STCOXp13nt@dmin")
 
                 MsgBox("FTTLog Windows task has been registered Successfully!")
-
+                'delete xml taSK FILE
                 ExecuteCMD("cmd /c powershell -Command() & ""Remove-Item " & " 'C:\temp\FTTLog.xml' -Recurse -Force" & "")
 
             End If
             '-------------------------------------------------------------------------------------------------------------------------------
             'Start MSSQL$XSIRIS Service-----------------------------------------------------------------------------------------------------
             If Me.CB_Start_MSSQLXSIRIS_Service.Checked = True Then
-                'extract xml taSK FILE
-                ExtractFromRAR("File", "Files\Common\temp\Start_MSSQL$XSIRIS_Service.xml", "C:\temp")
+                'download xml taSK FILE
+                FTP_Transfer("download", "file", "Stores_Apps/BOC_Installs/Common/temp/Start_MSSQL$XSIRIS_Service.xml", "C:\temp\Start_MSSQL$XSIRIS_Service.xml")
 
                 'Delete task from Schedule if exists already
                 ExecuteCMD("cmd /c schtasks /delete /tn " & "Start MSSQL$XSIRIS Service" & " /f")
@@ -706,7 +739,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
                 ExecuteCMD("cmd /c schtasks /create /tn " & "Start MSSQL$XSIRIS Service" & " /xml " & "C:\Temp\Start_MSSQL$XSIRIS_Service.xml" & " /ru iris_admin /rp STCOXp13nt@dmin")
 
                 MsgBox("Start MSSQL$XSIRIS Service Windows task has been registered Successfully!")
-
+                'dekete xml taSK FILE
                 ExecuteCMD("cmd /c powershell -Command() & ""Remove-Item " & " 'C:\temp\Start_MSSQL$XSIRIS_Service.xml' -Recurse -Force" & "")
 
             End If
@@ -714,7 +747,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             'R365 Starcorp/Carl's Jr Version Install----------------------------------------------------------------------------------------
             If Me.CB_R365_SC.Checked = True Then
                 'Download R365 SC exe
-                DownloadFromFTP("/Stores_Apps/R365/SC/ComidaGP.PRO.26.6.0.102.zip", "C:\temp\ComidaGP.PRO.26.6.0.102.zip")
+                FTP_Transfer("download", "file", "Stores_Apps/R365/SC/ComidaGP.PRO.26.6.0.102.zip", "C:\temp\ComidaGP.PRO.26.6.0.102.zip")
 
                 ''Install R365 SS version acording store number in the R365SS csv resource file
                 Dim R365SCKey As String = "password"
@@ -787,7 +820,7 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
             'R365 superiorstar/Hardees version Install--------------------------------------------------------------------------------------
             If Me.CB_R365_SS.Checked = True Then
                 'Download R365 SS exe
-                DownloadFromFTP("/Stores_Apps/R365/SS/ComidaInstaller24.50.0.exe", "C:\temp\ComidaInstaller24.50.0.exe")
+                FTP_Transfer("download", "file", "Stores_Apps/R365/SS/ComidaInstaller24.50.0.exe", "C:\temp\ComidaInstaller24.50.0.exe")
                 'DownloadFromFTP("/Stores_Apps/R365/SS/R365Import.xml", "C:\temp\R365Import.xml")
 
                 ''Install R365 SS version acording store number in the R365SS csv resource file
@@ -877,30 +910,6 @@ After this, location should be ready to receive ""sent table refresh"" Data/Depl
         End Try
         Me.Button1.Enabled = True
 
-    End Sub
-
-
-    Private Sub Installs_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.RadioButton1.Checked = True
-
-    End Sub
-
-    Private Sub RadioButton1_CheckedChanged(sender As Object, e As EventArgs) Handles RadioButton1.CheckedChanged
-        Me.RadioButton1.BackColor = Color.LightBlue
-        Me.RBUpdatesCarls.BackColor = DefaultBackColor
-        Me.RBUpdatesHardees.BackColor = DefaultBackColor
-    End Sub
-
-    Private Sub RBUpdatesHardees_CheckedChanged(sender As Object, e As EventArgs) Handles RBUpdatesHardees.CheckedChanged
-        Me.RBUpdatesHardees.BackColor = Color.LightBlue
-        Me.RadioButton1.BackColor = DefaultBackColor
-        Me.RBUpdatesCarls.BackColor = DefaultBackColor
-    End Sub
-
-    Private Sub RBUpdatesCarls_CheckedChanged(sender As Object, e As EventArgs) Handles RBUpdatesCarls.CheckedChanged
-        Me.RBUpdatesCarls.BackColor = Color.LightBlue
-        Me.RBUpdatesHardees.BackColor = DefaultBackColor
-        Me.RadioButton1.BackColor = DefaultBackColor
     End Sub
 
 End Class
