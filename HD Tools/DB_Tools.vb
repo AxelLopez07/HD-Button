@@ -807,160 +807,6 @@ Public Class DB_Tools
         End Try
 
     End Sub
-    'download specific file from FTP server to local path method
-    Public Shared Sub DownloadFromFTP(File As String, LocalPath As String)
-        Try
-            'Dim SN As DataTable = GetTableDataFromServer("select storenum from iris.dbo.tblStoreInfo")
-
-            Dim ftpHost As String = "ftp://starcorpus.net/"
-            Dim ftpUser As String = "bi_admin_ftp@starcorpus.net"
-            Dim ftpPass As String = "nsd654159"
-            Dim FTP_FilePath As String = ftpHost & File
-
-            'download parameters
-            Dim request As FtpWebRequest = CType(WebRequest.Create(FTP_FilePath), FtpWebRequest)
-            request.Method = WebRequestMethods.Ftp.DownloadFile
-            request.Credentials = New NetworkCredential(ftpUser, ftpPass)
-            request.UseBinary = True
-            request.UsePassive = True   ' VERY important
-            request.KeepAlive = False
-            'request.EnableSsl = True
-            request.Timeout = 600000
-            request.ReadWriteTimeout = 600000
-
-            'download file
-            Using response As FtpWebResponse = CType(request.GetResponse(), FtpWebResponse)
-                Using responseStream As Stream = response.GetResponseStream()
-                    Using fs As New FileStream(LocalPath, FileMode.Create)
-                        responseStream.CopyTo(fs)
-                    End Using
-                End Using
-            End Using
-
-        Catch ex As Exception
-            MsgBox("Error in downloading File: " & File & ex.ToString)
-        End Try
-
-    End Sub
-    'Download all files from a specific folder on the FTP server to a local folder
-    Public Shared Sub DownloadFolderFromFTP(FTPFolder As String, LocalFolder As String)
-
-        Try
-
-            Dim ftpHost As String = "ftp://starcorpus.net/"
-            Dim ftpUser As String = "bi_admin_ftp@starcorpus.net"
-            Dim ftpPass As String = "nsd654159"
-
-            ' Make sure the local folder exists
-            If Not Directory.Exists(LocalFolder) Then
-                Directory.CreateDirectory(LocalFolder)
-            End If
-
-            ' FTP folder path
-            Dim FTPFolderPath As String = ftpHost & FTPFolder
-
-            ' Get directory listing
-            Dim request As FtpWebRequest =
-            CType(WebRequest.Create(FTPFolderPath), FtpWebRequest)
-
-            request.Method = WebRequestMethods.Ftp.ListDirectory
-            request.Credentials = New NetworkCredential(ftpUser, ftpPass)
-            request.UseBinary = True
-            request.UsePassive = True
-            request.KeepAlive = False
-            request.Timeout = 600000
-            request.ReadWriteTimeout = 600000
-
-            Dim files As New List(Of String)
-
-            Using response As FtpWebResponse =
-            CType(request.GetResponse(), FtpWebResponse)
-
-                Using responseStream As Stream = response.GetResponseStream()
-                    Using reader As New StreamReader(responseStream)
-
-                        While Not reader.EndOfStream
-                            Dim fileName As String = reader.ReadLine()
-
-                            If Not String.IsNullOrWhiteSpace(fileName) Then
-                                files.Add(fileName)
-                            End If
-
-                        End While
-
-                    End Using
-                End Using
-
-            End Using
-
-
-            ' Download every file
-            For Each fileName As String In files
-
-                Try
-
-                    Dim FTPFilePath As String = ftpHost &
-                                            FTPFolder.TrimEnd("/"c) &
-                                            "/" &
-                                            fileName
-
-                    Dim LocalFilePath As String =
-                    Path.Combine(LocalFolder, fileName)
-
-                    Dim downloadRequest As FtpWebRequest =
-                    CType(WebRequest.Create(FTPFilePath), FtpWebRequest)
-
-                    downloadRequest.Method =
-                    WebRequestMethods.Ftp.DownloadFile
-
-                    downloadRequest.Credentials =
-                    New NetworkCredential(ftpUser, ftpPass)
-
-                    downloadRequest.UseBinary = True
-                    downloadRequest.UsePassive = True
-                    downloadRequest.KeepAlive = False
-                    downloadRequest.Timeout = 600000
-                    downloadRequest.ReadWriteTimeout = 600000
-
-                    Using response As FtpWebResponse =
-                    CType(downloadRequest.GetResponse(), FtpWebResponse)
-
-                        Using responseStream As Stream =
-                        response.GetResponseStream()
-
-                            ' FileMode.Create automatically replaces the existing file
-                            Using fs As New FileStream(
-                            LocalFilePath,
-                            FileMode.Create,
-                            FileAccess.Write)
-
-                                responseStream.CopyTo(fs)
-
-                            End Using
-
-                        End Using
-
-                    End Using
-
-                    'Debug.WriteLine("Downloaded: " & fileName)
-
-                Catch ex As Exception
-
-                    Debug.WriteLine(
-                    "Error downloading " & fileName &
-                    ": " & ex.Message)
-
-                End Try
-
-            Next
-
-        Catch ex As Exception
-
-            MsgBox("Error accessing FTP folder: " & ex.ToString)
-
-        End Try
-
-    End Sub
 
     Public Shared Sub ExecuteCMDAndLog(command As String, logFilePath As String)
 
@@ -1005,62 +851,21 @@ Public Class DB_Tools
         Try
             'Download LSIData database file to Reginfo folder Reg1
             If Directory.Exists("C:\IRIS\RegInfo\Reg1\foodpreptags") Then
-                DownloadFromFTP(FTPPath.ToString, "C:\IRIS\RegInfo\Reg1\foodpreptags\LSIData.mdb")
+                FTP_Transfer("download", "file", FTPPath.ToString, "C:\IRIS\RegInfo\Reg1\foodpreptags\LSIData.mdb")
             Else
                 Directory.CreateDirectory("C:\IRIS\RegInfo\Reg1\foodpreptags")
-                DownloadFromFTP(FTPPath.ToString, "C:\IRIS\RegInfo\Reg1\foodpreptags\LSIData.mdb")
+                FTP_Transfer("download", "file", FTPPath.ToString, "C:\IRIS\RegInfo\Reg1\foodpreptags\LSIData.mdb")
             End If
+
             'Download LSIData database file to Reginfo folder Reg2
             If Directory.Exists("C:\IRIS\RegInfo\Reg2\foodpreptags") Then
-                DownloadFromFTP(FTPPath.ToString, "C:\IRIS\RegInfo\Reg2\foodpreptags\LSIData.mdb")
+                FTP_Transfer("download", "file", FTPPath.ToString, "C:\IRIS\RegInfo\Reg2\foodpreptags\LSIData.mdb")
             Else
                 Directory.CreateDirectory("C:\IRIS\RegInfo\Reg2\foodpreptags")
-                DownloadFromFTP(FTPPath.ToString, "C:\IRIS\RegInfo\Reg2\foodpreptags\LSIData.mdb")
+                FTP_Transfer("download", "file", FTPPath.ToString, "C:\IRIS\RegInfo\Reg1\foodpreptags\LSIData.mdb")
             End If
 
-
-            ''Copy local downloaded LSIData.mdb file to remote registers Reg1 and Reg2
-            'Dim remotePC As String = "192.168.1.101"
-            'Dim username As String = "iris_admin"
-            'Dim password As String = "STCOXp13nt@dmin"
-
-            'Dim sourceFile As String = "C:\IRIS\RegInfo\Reg1\foodpreptags\LSIData.mdb"
-            'Dim destinationFile As String = "\\" & remotePC & "\C$\Users\IRIS_USER\AppData\Local\VirtualStore\Programdata\Lucas\FoodPreptags\LSIData.mdb"
-
-            ''Connect to remote admin share
-            'Dim psi As New ProcessStartInfo()
-
-            'psi.FileName = "cmd.exe"
-            'psi.Arguments = "/c net use \\" & remotePC & "\C$ /user:" & username & " " & password
-            'psi.CreateNoWindow = True
-            'psi.UseShellExecute = False
-            'psi.RedirectStandardOutput = True
-            'psi.RedirectStandardError = True
-
-            'Dim p As Process = Process.Start(psi)
-            'p.WaitForExit()
-
-            ''Optional: read command output
-            ''Dim output As String = p.StandardOutput.ReadToEnd()
-            ''Dim errors As String = p.StandardError.ReadToEnd()
-
-            ''Console.WriteLine(output)
-            ''Console.WriteLine(errors)
-
-            ''Copy file
-            'File.Copy(sourceFile, destinationFile, True)
-
             MsgBox("LSIData.mdb file downloaded to reginfo folders correctly")
-
-            ''Disconnect network share
-            'Dim psiDisconnect As New ProcessStartInfo()
-
-            'psiDisconnect.FileName = "cmd.exe"
-            'psiDisconnect.Arguments = "/c net use \\" & remotePC & "\C$ /delete /y"
-            'psiDisconnect.CreateNoWindow = True
-            'psiDisconnect.UseShellExecute = False
-
-            'Process.Start(psiDisconnect).WaitForExit()
 
         Catch ex As Exception
 
