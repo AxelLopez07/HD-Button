@@ -862,7 +862,7 @@ Public Class DB_Tools
                 FTP_Transfer("download", "file", FTPPath.ToString, "C:\IRIS\RegInfo\Reg2\foodpreptags\LSIData.mdb")
             Else
                 Directory.CreateDirectory("C:\IRIS\RegInfo\Reg2\foodpreptags")
-                FTP_Transfer("download", "file", FTPPath.ToString, "C:\IRIS\RegInfo\Reg1\foodpreptags\LSIData.mdb")
+                FTP_Transfer("download", "file", FTPPath.ToString, "C:\IRIS\RegInfo\Reg2\foodpreptags\LSIData.mdb")
             End If
 
             MsgBox("LSIData.mdb file downloaded to reginfo folders correctly")
